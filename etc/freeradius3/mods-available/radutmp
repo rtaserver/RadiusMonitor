@@ -1,0 +1,9 @@
+
+radutmp {
+	filename = ${logdir}/radutmp
+	username = %{User-Name}
+	case_sensitive = yes
+	check_with_nas = yes
+	permissions = 0600
+	caller_id = "yes"
+}

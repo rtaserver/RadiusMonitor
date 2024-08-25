@@ -1,0 +1,4 @@
+
+unix {
+	radwtmp = ${logdir}/radwtmp
+}

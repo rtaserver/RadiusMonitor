@@ -1,0 +1,6 @@
+
+DEFAULT
+	Vendor-Specific =* ANY,
+	Message-Authenticator =* ANY,
+	Error-Cause =* ANY,
+	Proxy-State =* ANY

@@ -1,0 +1,51 @@
+
+Xeap.authorize {
+	cache_eap
+	if (ok) {
+		if (&control:State) {
+			update control {
+				&Cache-TTL := 0
+			}
+			cache_eap
+			update control {
+				&State !* ANY
+			}
+		}
+		handled
+	}
+	else {
+		eap.authorize
+	}
+}
+Xeap.authenticate {
+	eap {
+		handled = 1
+	}
+	if (handled) {
+		cache_eap.authorize
+		handled
+	}
+	cache_eap.authorize
+}
+forbid_eap {
+	if (&EAP-Message) {
+		reject
+	}
+}
+permit_only_eap {
+	if (!&EAP-Message) {
+		if (!&outer.request || !&outer.request:EAP-Message) {
+			reject
+		}
+	}
+}
+remove_reply_message_if_eap {
+	if (&reply:EAP-Message && &reply:Reply-Message) {
+		update reply {
+			&Reply-Message !* ANY
+		}
+	}
+	else {
+		noop
+	}
+}

@@ -1,0 +1,9 @@
+
+DEFAULT
+	EAP-Message =* ANY,
+	State =* ANY,
+	Message-Authenticator =* ANY,
+	Reply-Message =* ANY,
+	Proxy-State =* ANY,
+	Session-Timeout =* ANY,
+	Idle-Timeout =* ANY

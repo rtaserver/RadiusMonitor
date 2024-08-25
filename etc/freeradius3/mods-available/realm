@@ -1,0 +1,21 @@
+
+realm IPASS {
+	format = prefix
+	delimiter = "/"
+}
+realm suffix {
+	format = suffix
+	delimiter = "@"
+}
+realm bangpath {
+	format = prefix
+	delimiter = "!"
+}
+realm realmpercent {
+	format = suffix
+	delimiter = "%"
+}
+realm ntdomain {
+	format = prefix
+	delimiter = "\\"
+}
