@@ -393,7 +393,7 @@ while true; do
     echo ""
     echo "================================================" | lolcat
 
-    echo -n "Please select an option (1-10): " | lolcat
+    echo -n "Please select an option (1-11): " | lolcat
     read choice
 
     case $choice in
