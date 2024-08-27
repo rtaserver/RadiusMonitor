@@ -31,7 +31,7 @@ if [ "$LOCAL_HASH" != "$REMOTE_HASH" ]; then
   cp "$LOCAL_SCRIPT" "${LOCAL_SCRIPT}.bak"
   mv "$TEMP_FILE" "$LOCAL_SCRIPT"
   chmod +x "$LOCAL_SCRIPT"
-  exec "$LOCAL_SCRIPT" "$@"
+  exec "$LOCAL_SCRIPT"
 else
   echo "The script is up to date, no update needed."
   sleep 2
