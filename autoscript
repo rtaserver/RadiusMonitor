@@ -387,8 +387,9 @@ while true; do
     echo " > 7 - Install Packages Chilli + Config" | lolcat
     echo " > 8 - Install Network Firewall Hotspot" | lolcat
     echo ""
-    echo " > 9 - Reload Freeradius And Chilli" | lolcat
-    echo " > 10 - Exit" | lolcat
+    echo " > 9 - Fix Upload Bocor / Lost" | lolcat
+    echo " > 10 - Reload Freeradius And Chilli" | lolcat
+    echo " > 11 - Exit" | lolcat
     echo ""
     echo "================================================" | lolcat
 
@@ -497,6 +498,15 @@ while true; do
             echo "Installation completed successfully!" | lolcat
             ;;
         9)
+            echo "Configuring Fix Upload Lost..." | lolcat
+            sleep 2
+            clear
+            curl -o /tmp/fix_upload.sh https://raw.githubusercontent.com/Maizil41/fix-upload/main/fix_upload.sh
+            bash /tmp/fix_upload.sh
+            clear
+            echo "Installation completed successfully!" | lolcat
+            ;;
+        10)
             echo "Reloading Freeradius..." | lolcat
             until /etc/init.d/radiusd restart; do
                 echo "Freeradius reload failed, retrying..." | lolcat
@@ -510,7 +520,7 @@ while true; do
             done
             echo "Chilli reloaded successfully!" | lolcat
             ;;
-        10)
+        11)
             echo "Exiting..." | lolcat
             exit 0
             ;;
