@@ -19,10 +19,10 @@ fi
 # Cek Update Di Github | HASH
 echo "Currently checking script updates..." | lolcat
 GITHUB_URL="https://raw.githubusercontent.com/rtaserver/RadiusMonitor/radius/autoscript"
-LOCAL_SCRIPT=$(realpath "$0")
+LOCAL_SCRIPT="/usr/bin/radmoninstaller"
 LOCAL_HASH=$(sha256sum "$LOCAL_SCRIPT" | awk '{ print $1 }')
-TEMP_FILE=$(mktemp)
-curl -s -o "$TEMP_FILE" "$GITHUB_URL" &>/dev/null
+TEMP_FILE="/tmp/radmontmp"
+wget -qO "$TEMP_FILE" "$GITHUB_URL" &>/dev/null
 REMOTE_HASH=$(sha256sum "$TEMP_FILE" | awk '{ print $1 }')
 clear
 if [ "$LOCAL_HASH" != "$REMOTE_HASH" ]; then
