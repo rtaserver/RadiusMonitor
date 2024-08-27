@@ -27,12 +27,14 @@ REMOTE_HASH=$(sha256sum "$TEMP_FILE" | awk '{ print $1 }')
 clear
 if [ "$LOCAL_HASH" != "$REMOTE_HASH" ]; then
   echo "Update local scripts with the latest scripts."
+  sleep 2
   cp "$LOCAL_SCRIPT" "${LOCAL_SCRIPT}.bak"
   mv "$TEMP_FILE" "$LOCAL_SCRIPT"
   chmod +x "$LOCAL_SCRIPT"
   exec "$LOCAL_SCRIPT" "$@"
 else
   echo "The script is up to date, no update needed."
+  sleep 2
 fi
 rm -f "$TEMP_FILE"
 #===========================================================================================================================
