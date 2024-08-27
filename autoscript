@@ -18,7 +18,7 @@ fi
 #===========================================================================================================================
 # Cek Update Di Github | HASH
 echo "Currently checking script updates..." | lolcat
-GITHUB_URL="https://raw.githubusercontent.com/username/repo/main/script.sh"
+GITHUB_URL="https://raw.githubusercontent.com/rtaserver/RadiusMonitor/radius/autoscript"
 LOCAL_SCRIPT=$(realpath "$0")
 LOCAL_HASH=$(sha256sum "$LOCAL_SCRIPT" | awk '{ print $1 }')
 TEMP_FILE=$(mktemp)
