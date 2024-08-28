@@ -201,6 +201,7 @@ install_packages_phpmyadmin() {
 configur_phpmyadmin() {
     mv /www/phpmyadmin/config.sample.inc.php /www/phpmyadmin/config.inc.php
     sed -i -E "s|localhost|127.0.0.1|g" /www/phpmyadmin/config.inc.php
+    sed -i "/\$cfg\['Servers'\]\[.*\]\['AllowNoPassword'\] = false;/a \$cfg\['AllowThirdPartyFraming'\] = true;" /www/phpmyadmin/config.inc.php
     cat <<'EOF' >/usr/lib/lua/luci/controller/phpmyadmin.lua
 module("luci.controller.phpmyadmin", package.seeall)
 function index()
