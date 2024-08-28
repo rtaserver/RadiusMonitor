@@ -345,7 +345,7 @@ configur_netfirewall() {
     uci set network.hotspot.name='br-hotspot'
     uci set network.hotspot.type='bridge'
     uci set network.hotspot.ipv6='0'
-    uci add_list network.hotspot.ports='${dev_hotspot}'
+    uci add_list network.hotspot.ports="${dev_hotspot}"
 
     uci set network.voucher=interface
     uci set network.voucher.name='voucher'
