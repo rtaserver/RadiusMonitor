@@ -50,27 +50,27 @@ if ! opkg list-installed | grep -q "^lolcat "; then
 fi
 #===========================================================================================================================
 #===========================================================================================================================
-# Cek Update Di Github | HASH
-# echo "Currently checking script updates..." | lolcat
-# GITHUB_URL="https://raw.githubusercontent.com/rtaserver/RadiusMonitor/radius/autoscript"
-# LOCAL_SCRIPT="/usr/bin/radmoninstaller"
-# LOCAL_HASH=$(sha256sum "$LOCAL_SCRIPT" | awk '{ print $1 }')
-# TEMP_FILE="/tmp/radmontmp"
-# wget -qO "$TEMP_FILE" "$GITHUB_URL" &>/dev/null
-# REMOTE_HASH=$(sha256sum "$TEMP_FILE" | awk '{ print $1 }')
-# clear
-# if [ "$LOCAL_HASH" != "$REMOTE_HASH" ]; then
-#   echo "Update local scripts with the latest scripts."
-#   sleep 3
-#   cp "$LOCAL_SCRIPT" "${LOCAL_SCRIPT}.bak"
-#   mv "$TEMP_FILE" "$LOCAL_SCRIPT"
-#   chmod +x "$LOCAL_SCRIPT"
-#   exec "$LOCAL_SCRIPT"
-# else
-#   echo "The script is up to date, no update needed."
-#   sleep 2
-# fi
-# rm -f "$TEMP_FILE"
+Cek Update Di Github | HASH
+echo "Currently checking script updates..." | lolcat
+GITHUB_URL="https://raw.githubusercontent.com/rtaserver/RadiusMonitor/radius/autoscript"
+LOCAL_SCRIPT="/usr/bin/radmoninstaller"
+LOCAL_HASH=$(sha256sum "$LOCAL_SCRIPT" | awk '{ print $1 }')
+TEMP_FILE="/tmp/radmontmp"
+wget -qO "$TEMP_FILE" "$GITHUB_URL" &>/dev/null
+REMOTE_HASH=$(sha256sum "$TEMP_FILE" | awk '{ print $1 }')
+clear
+if [ "$LOCAL_HASH" != "$REMOTE_HASH" ]; then
+  echo "Update local scripts with the latest scripts."
+  sleep 3
+  cp "$LOCAL_SCRIPT" "${LOCAL_SCRIPT}.bak"
+  mv "$TEMP_FILE" "$LOCAL_SCRIPT"
+  chmod +x "$LOCAL_SCRIPT"
+  exec "$LOCAL_SCRIPT"
+else
+  echo "The script is up to date, no update needed."
+  sleep 2
+fi
+rm -f "$TEMP_FILE"
 #===========================================================================================================================
 #===========================================================================================================================
 install_packages_php8() {
