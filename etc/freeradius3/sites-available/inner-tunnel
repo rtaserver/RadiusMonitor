@@ -36,7 +36,7 @@ authenticate {
 	eap
 }
 session {
-	radutmp
+	# radutmp
 	sql
 }
 post-auth {
