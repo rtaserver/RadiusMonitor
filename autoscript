@@ -290,7 +290,7 @@ configur_freeradius() {
     # ln -s ../mods-available/radutmp
     ln -s ../mods-available/realm
     ln -s ../mods-available/sql
-    ln -s ../mods-available/sradutmp
+    # ln -s ../mods-available/sradutmp
     ln -s ../mods-available/unix
 
     cd /etc/freeradius3/sites-enabled
