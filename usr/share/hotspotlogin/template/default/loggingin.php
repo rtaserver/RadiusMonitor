@@ -1,43 +1,58 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-  <title>Mutiara-Wrt</title>
-  <script type="text/javascript" language="Javascript">
-  //<!--
-  function getURLParam(name) {
-    var params = new URLSearchParams(window.location.search);
-    return params.get(name);
-  }
+<title>mikrotik hotspot > advertisement</title>
+<meta http-equiv="refresh" content="2; url=$(link-orig)">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="expires" content="-1">
+<style type="text/css">
+<!--
+textarea,input,select {
+	background-color: #FDFBFB;
+	border: 1px #BBBBBB solid;
+	padding: 2px;
+	margin: 1px;
+	font-size: 14px;
+	color: #808080;
+}
 
-  var loginUrl = 'http://10.10.10.1:3990/prelogin';
-  function redirect() { 
-    if (loginUrl) {
-      window.location = loginUrl; 
-    } else {
-      console.error('Login URL is not defined.');
-    }
-    return false; 
-  }
+body{ color: #737373; font-size: 12px; font-family: verdana; }
 
-  window.onload = function() {
-    var paramUrl = getURLParam("loginurl");
-    if (paramUrl) {
-      loginUrl = paramUrl;
+a, a:link, a:visited, a:active { color: #AAAAAA; text-decoration: none; font-size: 12px; }
+a:hover { border-bottom: 1px dotted #c1c1c1; color: #AAAAAA; }
+img {border: none;}
+td { font-size: 12px; color: #7A7A7A; }
+
+-->
+</style>
+<script language="JavaScript">
+<!--
+    var popup = '';
+    function openOrig() {
+	if (window.focus) popup.focus();
+	location.href = unescape('$(link-orig-esc)');
     }
-    setTimeout(redirect, 5000); 
-  }
-  //-->
-  </script>
+    function openAd() {
+	location.href = unescape('$(link-redirect-esc)');
+    }
+    function openAdvert() {
+	if (window.name != 'hotspot_advert') {
+		return;
+	}
+    }
+//-->
+</script>
 </head>
-<body style="margin: 0pt auto; height:100%;">
-  <div style="width:100%;height:80%;position:fixed;display:table;">
-    <p style="display: table-cell; line-height: 2.5em; vertical-align:middle; text-align:center; color:grey;">
-      <a href="#" onclick="javascript:return redirect();">
-        <img src="assets/images/coova.jpg" alt="" border="0" height="39" width="123"/>
-      </a><br>
-      <small><img src="assets/images/wait.gif"/> redirecting...</small>
-    </p>
-    <br><br>
-  </div>
+<body onLoad="openAdvert()">
+<table width="100%" height="100%">
+<tr>
+	<td align="center" valign="middle">
+	Advertisement.
+	<br><br>
+	If nothing happens, open
+	manually.
+	</td>
+</tr>
+</table>
 </body>
 </html>

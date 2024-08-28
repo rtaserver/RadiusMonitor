@@ -6,16 +6,29 @@
 <meta name="theme-color" content="#3B5998" />
 <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;"/>
 <link rel="stylesheet" href="assets/style.css">
-    <style>
-        .frame img {
-            width: 100%;
-            height: auto;
+   <style>
+        body {
+        color: #fff;
+        font-family: Arial, sans-serif;
+        background-image: url("background.avif");
+        background-size: cover;
+        background-position: auto;
         }
     </style>
+<script language="JavaScript">
+
+function updateData() {
+location.reload();
+}
+setInterval(updateData, 5000);
+
+</script>
+
 </head>
 </br><br>
 <div class="main">
 <form action="http://10.10.10.1:3990/logoff" name="logout" onSubmit="return openLogout()">
+
 
 <?php
 	    if (isset($_GET['mac'])) {
@@ -46,11 +59,11 @@
                     
             $sqlTotalSession = "SELECT g.value as total_session FROM radgroupcheck as g, radusergroup as u WHERE u.username = '$user' AND g.groupname = u.groupname AND g.attribute ='Max-All-Session';";
             $resultTotalSession = mysqli_fetch_assoc(mysqli_query($conn, $sqlTotalSession));
-            $totalSession = isset($resultTotalSession['total_session']) ? $resultTotalSession['total_session'] : 0;
+            $totalSession = $resultTotalSession['total_session'];
 
             $sqlTotalKuota = "SELECT h.value as total_kuota FROM radgroupreply as h, radusergroup as i WHERE i.username = '$user' AND h.groupname = i.groupname AND h.attribute ='ChilliSpot-Max-Total-Octets';";
             $resultTotalKuota = mysqli_fetch_assoc(mysqli_query($conn, $sqlTotalKuota));
-            $totalKuota = isset($resultTotalKuota['total_kuota']) ? $resultTotalKuota['total_kuota'] : 0;
+            $totalKuota = $resultTotalKuota['total_kuota'];
             
             $sqlOctetsDigunakan = "SELECT SUM(acctinputoctets + acctoutputoctets) as total_octets FROM radacct WHERE username = '$user';";
             $resultOctetsDigunakan = mysqli_fetch_assoc(mysqli_query($conn, $sqlOctetsDigunakan));
@@ -84,7 +97,7 @@
 				$userMacAddress = $row['CallingStationId'];
 				$userExpired = time2str($remainingTime);
 				$UserKuota = toxbyte($sisaKuota);
-                
+
                 $data[] = array(
                 'username' => $username,
                 'userIPAddress' => $userIPAddress,
@@ -106,17 +119,17 @@
                 echo '<div style="margin-top:20px; text-align: center;"><h3>Welcome</h3><i style="font-size:50px;" class="icon icon-user-circle-o">&#xf2be;</i> <h2 id="user">' . $row['username'] . '</h2></div><br>';
                 echo '<table class="table2">';
                 echo '<br/>';
-                echo '<tr><td align="right" style="width: 40%;">IP Address <i class="icon icon-sitemap">&#xf0e8;</i></td><td>' . $row['userIPAddress'] . '</td></tr>';
-                echo '<tr><td align="right">MAC Address <i class="icon icon-barcode">&#xe80a;</i></td><td>' . $row['userMacAddress'] . '</td></tr>';
-                echo '<tr><td align="right">Upload <i class="icon icon-upload">&#xe808;</i></td><td><div id="upload">' . $row['userUpload'] . '</td></tr>';
-                echo '<tr><td align="right">Download <i class="icon icon-download">&#xe809;</i></td><td><div id="download">' . $row['userDownload'] . '</td></tr>';
-                echo '<tr><td align="right">Total Traffic <i class="icon icon-exchange">&#xf0ec;</i></td><td><div id="traffic">' . $row['userTraffic'] . '</td></tr>';
-                echo '<tr><td align="right">Terkoneksi <i class="icon icon-clock">&#xe805;</i></td><td><div id="aktif">' . $row['userOnlineTime'] . '</td></tr>';
-if ($totalSession >= 1) {
-                echo '<tr><td align="right">Sisa Waktu <i class="icon icon-clock">&#xe805;</i></td><td><div id="expired">' . $row['userExpired'] . '</td></tr>';
+                echo '<tr><td align="right" style="width: 40%;">IP Address <i class="icon icon-sitemap">&#xf0e8;</i> </td><td>' . $row['userIPAddress'] . '</td></tr>';
+                echo '<tr><td align="right">MAC Address <i class="icon icon-barcode">&#xe80a;</i> </td><td>' . $row['userMacAddress'] . '</td></tr>';
+                echo '<tr><td align="right">Upload <i class="icon icon-upload">&#xe808;</i> </td><td>' . $row['userUpload'] . '</td></tr>';
+                echo '<tr><td align="right">Download <i class="icon icon-download">&#xe809;</i> </td><td>' . $row['userDownload'] . '</td></tr>';
+                echo '<tr><td align="right">Total Traffic <i class="icon icon-exchange">&#xf0ec;</i> </td><td>' . $row['userTraffic'] . '</td></tr>';
+                echo '<tr><td align="right">Terkoneksi <i class="icon icon-clock">&#xe805;</i> </td><td>' . $row['userOnlineTime'] . '</td></tr>';
+if ($duration <= 8640000) {
+                echo '<tr><td align="right">Sisa Waktu <i class="icon icon-clock">&#xe805;</i> </td><td>' . $row['userExpired'] . '</td></tr>';
 }
-if ($totalKuota >= 1) {
-                echo '<tr><td align="right">Sisa Kuota <i class="icon icon-clock">&#xf252;</i></td><td><div id="kuota">' . $row['userKuota'] . '</td></tr>';
+if ($totalKuota <= 536870912000) {
+                echo '<tr><td align="right">Sisa Kuota <i class="icon icon-clock">&#xf252;</i> </td><td>' . $row['userKuota'] . '</td></tr>';
 }
                 echo '</table>';
                 echo '<br/>';
@@ -202,19 +215,14 @@ if ($totalKuota >= 1) {
 </div>
 <script type="text/javascript">
     document.getElementById('title').innerHTML = window.location.hostname + " > status";
-</script>
-<script src="assets/js/jquery-3.6.3.min.js"></script>
-<script>
-    $(document).ready(function () {
-        setInterval(function(){
-            $("#download").load(window.location.href + " #download");
-            $("#upload").load(window.location.href + " #upload");
-            $("#traffic").load(window.location.href + " #traffic");
-            $("#aktif").load(window.location.href + " #aktif");
-            $("#expired").load(window.location.href + " #expired");
-            $("#kuota").load(window.location.href + " #kuota");
-        },1000);
-    });
+//get vaidity
+/*
+    var usr = document.getElementById('user').innerHTML
+    var url = "https://example.com/status/status.php?name="; // http://ip-server-mikhmon/mikhmonv2/status/status.php?name=
+    var SessionName = "wifijoss"
+    var getvalid = url+usr+"&session="+SessionName
+    document.getElementById('exp').src = getvalid;
+*/
 </script>
 </body>
 </html>

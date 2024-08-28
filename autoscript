@@ -5,6 +5,10 @@
 
 # RTA-WRT
 # RizkiKotet
+
+script_version="v1.0.2"
+script_changelog="Perbaikan Freeradius Dan Lost Upload"
+
 cd /tmp
 
 #===========================================================================================================================
@@ -245,28 +249,10 @@ install_packages_freeradius() {
 }
 configur_freeradius() {
     /etc/init.d/radiusd stop
-    rm -rf /etc/freeradius3/mods-available
-    rm -rf /etc/freeradius3/mods-config
-    rm -rf /etc/freeradius3/mods-enabled
-    rm -rf /etc/freeradius3/policy.d
-    rm -rf /etc/freeradius3/sites-available
-    rm -rf /etc/freeradius3/sites-enabled
-    rm -rf /etc/freeradius3/clients.conf
-    rm -rf /etc/freeradius3/dictionary
-    rm -rf /etc/freeradius3/proxy.conf
-    rm -rf /etc/freeradius3/radiusd.conf
 
-    cd /tmp/radmoninstaller/RadiusMonitor-radius/etc/freeradius3
-    mv mods-available /etc/freeradius3/mods-available
-    mv mods-config /etc/freeradius3/mods-config
-    mv mods-enabled /etc/freeradius3/mods-enabled
-    mv policy.d /etc/freeradius3/policy.d
-    mv sites-available /etc/freeradius3/sites-available
-    mv sites-enabled /etc/freeradius3/sites-enabled
-    mv clients.conf /etc/freeradius3/clients.conf
-    mv dictionary /etc/freeradius3/dictionary
-    mv proxy.conf /etc/freeradius3/proxy.conf
-    mv radiusd.conf /etc/freeradius3/radiusd.conf
+    rm -rf /etc/freeradius3
+    cd /tmp/radmoninstaller/RadiusMonitor-radius/etc
+    mv freeradius3 /etc/freeradius3
 
     rm -rf /usr/share/freeradius3
     cd /tmp/radmoninstaller/RadiusMonitor-radius/usr/share
@@ -287,10 +273,10 @@ configur_freeradius() {
     ln -s ../mods-available/mschap
     ln -s ../mods-available/pap
     ln -s ../mods-available/preprocess
-    # ln -s ../mods-available/radutmp
+    ln -s ../mods-available/radutmp
     ln -s ../mods-available/realm
     ln -s ../mods-available/sql
-    # ln -s ../mods-available/sradutmp
+    ln -s ../mods-available/sradutmp
     ln -s ../mods-available/unix
 
     cd /etc/freeradius3/sites-enabled
@@ -468,6 +454,9 @@ while true; do
     echo "    [*]    Radius Monitor By : Maizil  [*]" | lolcat
     echo "    [*]   Auto Script By : RizkiKotet  [*]" | lolcat
     echo ""
+    echo "  -> Version : ${script_version}" | lolcat
+    echo "  -> Changelog : ${script_changelog}" | lolcat
+    echo ""
     echo " > 1 - Install Packages PHP8" | lolcat
     echo " > 2 - Install Packages PEAR DB" | lolcat
     echo " > 3 - Install Packages MariaDB" | lolcat
@@ -483,7 +472,7 @@ while true; do
     echo ""
     echo "================================================" | lolcat
 
-    echo -n "Please select an option (1-11): " | lolcat
+    echo -n "Silahkan pilih menu (1-11): " | lolcat
     read choice
 
     case $choice in

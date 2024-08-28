@@ -1,4 +1,14 @@
+# -*- text -*-
+# Copyright (C) 2019 The FreeRADIUS Server project and contributors
+# This work is licensed under CC-BY version 4.0 https://creativecommons.org/licenses/by/4.0
+#
+#	Obsolete names for backwards compatibility with older users files.
+#	Move the $INCLUDE in the main dictionary file to the end if you want
+#	these names to be used in the "details" logfile.
+#
 
+#  This has been removed.  Too many people get it wrong.
+#ATTRIBUTE	Password				2	string	encrypt=1
 ATTRIBUTE	Client-Id				4	ipaddr
 ATTRIBUTE	Client-Port-Id				5	integer
 ATTRIBUTE	User-Service-Type			6	integer
@@ -19,6 +29,10 @@ VALUE	Auth-Type			Unix			1
 VALUE	Service-Type			Dialback-Login-User	3
 VALUE	Service-Type			Dialback-Framed-User	4
 VALUE	Service-Type			Dialout-Framed-User	5
+
+#
+#	For compatibility with MERIT users files.
+#
 ATTRIBUTE	Login-Callback-Number			19	string
 ATTRIBUTE	Framed-Callback-Id			20	string
 ATTRIBUTE	Client-Port-DNIS			30	string

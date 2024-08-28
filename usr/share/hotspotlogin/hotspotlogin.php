@@ -171,7 +171,7 @@ $redirurldecode = $redirurl;
 
 # If attempt to login
 if ($button == 'Login') {
-  $hexchal = pack("H*", $challenge);
+  $hexchal = pack ("H32", $challenge);
   if ($uamsecret) {
     $newchal = pack ("H*", md5($hexchal . $uamsecret));
   } else {
