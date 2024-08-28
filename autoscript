@@ -6,45 +6,81 @@
 # RTA-WRT
 # RizkiKotet
 cd /tmp
+
+cmdinstall() {
+local MAX_TIME=60
+while true; do
+  local start_time=$(date +%s)
+  echo "Notes: $2 ..." | lolcat
+  echo "Mohon Tunggu Sebentar.." | lolcat
+  echo "Pastikan koneksi internet lancar.." | lolcat
+  local output=$($1 2>&1)
+  local exit_code=$?
+  local end_time=$(date +%s)
+  local elapsed_time=$((end_time - start_time))
+  if [ $exit_code -eq 0 ]; then
+    if [ $elapsed_time -gt $MAX_TIME ]; then
+      echo "${2} berhasil, tapi koneksi lambat (waktu: ${elapsed_time}s)." | lolcat
+    else
+      echo "${2} berhasil." | lolcat
+    fi
+    sleep 3
+    clear
+    break
+  else
+    if [ $elapsed_time -gt $MAX_TIME ]; then
+      echo "${2} gagal, mungkin karena koneksi lambat (waktu: ${elapsed_time}s). Mengulangi..." | lolcat
+    else
+      echo "${2} gagal. Mengulangi..." | lolcat
+    fi
+    echo "Log kesalahan:" | lolcat
+    echo "$output" | lolcat
+    sleep 2
+    clear
+  fi
+  sleep 5
+done
+}
+
 #===========================================================================================================================
 if ! opkg list-installed | grep -q "^lolcat "; then
-    echo "Error: lolcat is not installed."
-    echo "opkg update && opkg install lolcat"
-    opkg update && opkg install lolcat
-    sleep 3
+    echo "Update PKG And lolcat"
+    cmdinstall "opkg update" "Update PKG"
+    cmdinstall "opkg install lolcat" "Install Lolcat"
 fi
 #===========================================================================================================================
 #===========================================================================================================================
 # Cek Update Di Github | HASH
-echo "Currently checking script updates..." | lolcat
-GITHUB_URL="https://raw.githubusercontent.com/rtaserver/RadiusMonitor/radius/autoscript"
-LOCAL_SCRIPT="/usr/bin/radmoninstaller"
-LOCAL_HASH=$(sha256sum "$LOCAL_SCRIPT" | awk '{ print $1 }')
-TEMP_FILE="/tmp/radmontmp"
-wget -qO "$TEMP_FILE" "$GITHUB_URL" &>/dev/null
-REMOTE_HASH=$(sha256sum "$TEMP_FILE" | awk '{ print $1 }')
-clear
-if [ "$LOCAL_HASH" != "$REMOTE_HASH" ]; then
-  echo "Update local scripts with the latest scripts."
-  sleep 3
-  cp "$LOCAL_SCRIPT" "${LOCAL_SCRIPT}.bak"
-  mv "$TEMP_FILE" "$LOCAL_SCRIPT"
-  chmod +x "$LOCAL_SCRIPT"
-  exec "$LOCAL_SCRIPT"
-else
-  echo "The script is up to date, no update needed."
-  sleep 2
-fi
-rm -f "$TEMP_FILE"
+# echo "Currently checking script updates..." | lolcat
+# GITHUB_URL="https://raw.githubusercontent.com/rtaserver/RadiusMonitor/radius/autoscript"
+# LOCAL_SCRIPT="/usr/bin/radmoninstaller"
+# LOCAL_HASH=$(sha256sum "$LOCAL_SCRIPT" | awk '{ print $1 }')
+# TEMP_FILE="/tmp/radmontmp"
+# wget -qO "$TEMP_FILE" "$GITHUB_URL" &>/dev/null
+# REMOTE_HASH=$(sha256sum "$TEMP_FILE" | awk '{ print $1 }')
+# clear
+# if [ "$LOCAL_HASH" != "$REMOTE_HASH" ]; then
+#   echo "Update local scripts with the latest scripts."
+#   sleep 3
+#   cp "$LOCAL_SCRIPT" "${LOCAL_SCRIPT}.bak"
+#   mv "$TEMP_FILE" "$LOCAL_SCRIPT"
+#   chmod +x "$LOCAL_SCRIPT"
+#   exec "$LOCAL_SCRIPT"
+# else
+#   echo "The script is up to date, no update needed."
+#   sleep 2
+# fi
+# rm -f "$TEMP_FILE"
 #===========================================================================================================================
 #===========================================================================================================================
 install_packages_php8() {
-    opkg update | lolcat
-    opkg remove libgd --force-depends && opkg install libopenssl-legacy php8 php8-cgi php8-cli php8-fastcgi php8-fpm \
+    cmdinstall "opkg update" "Update PKG"
+    cmdinstall "opkg remove libgd --force-depends" "Remove LibGD"
+    cmdinstall "opkg install libopenssl-legacy php8 php8-cgi php8-cli php8-fastcgi php8-fpm \
     php8-mod-bcmath php8-mod-calendar php8-mod-ctype php8-mod-curl php8-mod-dom php8-mod-exif \
     php8-mod-fileinfo php8-mod-filter php8-mod-gd php8-mod-iconv php8-mod-intl php8-mod-mbstring php8-mod-mysqli \
     php8-mod-mysqlnd php8-mod-opcache php8-mod-openssl php8-mod-pdo php8-mod-pdo-mysql php8-mod-phar php8-mod-session \
-    php8-mod-xml php8-mod-xmlreader php8-mod-xmlwriter php8-mod-zip | lolcat
+    php8-mod-xml php8-mod-xmlreader php8-mod-xmlwriter php8-mod-zip" "Install PHP8"
     clear
 }
 configur_php8() {
@@ -57,7 +93,7 @@ configur_php8() {
 #===========================================================================================================================
 #===========================================================================================================================
 install_packages_pear() {
-    wget -O go-pear.phar https://pear.php.net/go-pear.phar 2>&1 | lolcat
+    cmdinstall "wget -O go-pear.phar https://pear.php.net/go-pear.phar" "Download Bahan Pear"
     ln -s /usr/bin/php-cli /usr/bin/php
     clear
 }
@@ -69,26 +105,19 @@ configur_pear() {
 #===========================================================================================================================
 #===========================================================================================================================
 install_packages_mariadb() {
-    opkg update | lolcat
-    opkg install mariadb-server mariadb-server-extra mariadb-client mariadb-client-extra libmariadb nano | lolcat
+    cmdinstall "opkg update" "Update PKG"
+    cmdinstall "opkg install mariadb-server mariadb-server-extra mariadb-client mariadb-client-extra libmariadb nano" "Install MariaDB"
     clear
 }
 configur_mariadb() {
     sed -i -E "s|option enabled '0'|option enabled '1'|g" /etc/config/mysqld
     sed -i -E "s|# datadir		= /srv/mysql|datadir	= /usr/share/mysql|g" /etc/mysql/conf.d/50-server.cnf
     sed -i -E "s|127.0.0.1|0.0.0.0|g" /etc/mysql/conf.d/50-server.cnf
-    until /etc/init.d/mysqld restart; do
-        echo "Mysqld restart failed, retrying..." | lolcat
-        sleep 2
-    done
-    sleep 2
-    until /etc/init.d/mysqld reload; do
-        echo "Mysqld Reload failed, retrying..." | lolcat
-        sleep 2
-    done
+    cmdinstall "/etc/init.d/mysqld restart" "Merestart Mysqld"
+    cmdinstall "/etc/init.d/mysqld reload" "Mereload Mysqld"
 
-    echo -n "Enter the MariaDB root password: " | lolcat
-    read -s root_password
+    echo -n "Masukan Password Baru Untuk MariaDB root: " | lolcat
+    read root_password
     echo ""
     mysql -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('${root_password}');"
     mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${root_password}';"
@@ -108,16 +137,16 @@ install_packages_radmon() {
     cd /www
     if [ -d "/www/RadiusMonitor" ]; then rm -rf /www/RadiusMonitor; fi
     if [ -d "/www/RadiusMonitor-main" ]; then rm -rf /www/RadiusMonitor-main; fi
-    wget -O radmon.zip https://github.com/rtaserver/RadiusMonitor/archive/refs/heads/main.zip 2>&1 | lolcat
-    unzip radmon.zip | lolcat
+    cmdinstall "wget -O radmon.zip https://github.com/rtaserver/RadiusMonitor/archive/refs/heads/main.zip" "Download Bahan Radius Monitor"
+    cmdinstall "unzip radmon.zip" "Mengekstrak Bahan"
     rm -rf radmon.zip
     mv RadiusMonitor-main RadiusMonitor
     clear
 }
 configur_radmon() {
-    echo "Installing Database Radius Monitor." | lolcat
-    echo -n "Enter the MariaDB root password: " | lolcat
-    read -s root_password
+    echo "Menginstall Database Radius Monitor." | lolcat
+    echo -n "Masukan MariaDB root password: " | lolcat
+    read root_password
     echo ""
     mysql -u root -p"${root_password}" radius -e "SET FOREIGN_KEY_CHECKS = 0; $(mysql -u root -p"${root_password}" radius -e 'SHOW TABLES' | awk '{print "DROP TABLE IF EXISTS `" $1 "`;"}' | grep -v '^Tables' | tr '\n' ' ') SET FOREIGN_KEY_CHECKS = 1;"
     mysql -u root -p"${root_password}" radius < /www/RadiusMonitor/radius_monitor.sql
@@ -147,8 +176,8 @@ install_packages_phpmyadmin() {
     if [ -d "/www/phpmyadmin" ]; then rm -rf /www/phpmyadmin; fi
     if [ -d "/www/phpMyAdmin-5.2.1-all-languages" ]; then rm -rf /www/phpMyAdmin-5.2.1-all-languages; fi
     cd /www
-    wget https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-all-languages.zip 2>&1 | lolcat
-    unzip phpMyAdmin-5.2.1-all-languages.zip | lolcat
+    cmdinstall "wget https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-all-languages.zip" "Download PhpMyAdmin"
+    cmdinstall "unzip phpMyAdmin-5.2.1-all-languages.zip" "Mengekstrak Bahan"
     rm -rf phpMyAdmin-5.2.1-all-languages.zip
     mv phpMyAdmin-5.2.1-all-languages phpmyadmin
 }
@@ -178,21 +207,21 @@ chmod +x /usr/lib/lua/luci/view/phpmyadmin.htm
 #===========================================================================================================================
 #===========================================================================================================================
 install_packages_freeradius() {
-    opkg update | lolcat
-    opkg install freeradius3 freeradius3-common freeradius3-default freeradius3-mod-always freeradius3-mod-attr-filter \
+    cmdinstall "opkg update" "Update PKG"
+    cmdinstall "opkg install freeradius3 freeradius3-common freeradius3-default freeradius3-mod-always freeradius3-mod-attr-filter \
     freeradius3-mod-chap freeradius3-mod-detail freeradius3-mod-digest freeradius3-mod-eap \
     freeradius3-mod-eap-gtc freeradius3-mod-eap-md5 freeradius3-mod-eap-mschapv2 freeradius3-mod-eap-peap \
     freeradius3-mod-eap-pwd freeradius3-mod-eap-tls freeradius3-mod-eap-ttls freeradius3-mod-exec \
     freeradius3-mod-expiration freeradius3-mod-expr freeradius3-mod-files freeradius3-mod-logintime \
     freeradius3-mod-mschap freeradius3-mod-pap freeradius3-mod-preprocess freeradius3-mod-radutmp \
     freeradius3-mod-realm freeradius3-mod-sql freeradius3-mod-sql-mysql freeradius3-mod-sqlcounter \
-    freeradius3-mod-unix freeradius3-utils libfreetype wget-ssl curl unzip tar zoneinfo-asia | lolcat
+    freeradius3-mod-unix freeradius3-utils libfreetype wget-ssl curl unzip tar zoneinfo-asia" "Install Freeradius"
     clear
     if [ -d "/tmp/radmoninstaller" ]; then rm -rf /tmp/radmoninstaller; fi
     mkdir /tmp/radmoninstaller
     cd /tmp/radmoninstaller
-    wget https://github.com/rtaserver/RadiusMonitor/archive/refs/heads/radius.zip 2>&1 | lolcat
-    unzip radius.zip | lolcat
+    cmdinstall "wget https://github.com/rtaserver/RadiusMonitor/archive/refs/heads/radius.zip" "Download Bahan Freeradius"
+    cmdinstall "unzip radius.zip" "Mengekstrak Bahan"
     rm -rf /tmp/radius.zip
     clear
 }
@@ -259,14 +288,14 @@ configur_freeradius() {
 #===========================================================================================================================
 #===========================================================================================================================
 install_packages_chilli() {
-    opkg update | lolcat
-    opkg install coova-chilli | lolcat
+    cmdinstall "opkg update" "Update PKG"
+    cmdinstall "opkg install coova-chilli" "Install Chilli"
     clear
     if [ -d "/tmp/radmoninstaller" ]; then rm -rf /tmp/radmoninstaller; fi
     mkdir /tmp/radmoninstaller
     cd /tmp/radmoninstaller
-    wget https://github.com/rtaserver/RadiusMonitor/archive/refs/heads/radius.zip 2>&1 | lolcat
-    unzip radius.zip | lolcat
+    cmdinstall "wget https://github.com/rtaserver/RadiusMonitor/archive/refs/heads/radius.zip" "Download Bahan Chilli"
+    cmdinstall "unzip radius.zip" "Mengekstrak Bahan"
     rm -rf /tmp/radius.zip
     clear
 }
@@ -287,12 +316,21 @@ configur_chilli() {
 #===========================================================================================================================
 configur_netfirewall() {
     if ! uci show network | grep -q "br-hotspot"; then
-        echo "Adding new network configuration for br-hotspot..." | lolcat
-
-        # Prompt for device name, default to wlan0 if empty
+        echo "Menambahkan konfigurasi jaringan baru untuk br-hotspot..." | lolcat
+        echo "Daftar semua Network Device di OpenWrt..." | lolcat
+        ip link show | grep -E '^[0-9]+:' | awk -F': ' '{print $2}' | while read -r device; do
+            case "$device" in
+                lo|br-lan|br-hotspot|tun0|utun)
+                    continue
+                    ;;
+                *)
+                    echo "Device: $device" | lolcat
+                    ;;
+            esac
+        done
         echo ""
-        echo "Enter the available Device Name. If empty, 'wlan0' will be used." | lolcat
-        echo -n "Enter Device Name: " | lolcat
+        echo "Masukkan Network Device yang tersedia. Jika kosong, 'wlan0' akan digunakan." | lolcat
+        echo -n "Masukkan Network Device: " | lolcat
         read dev_hotspot
 
         # Set default to 'wlan0' if input is empty
@@ -320,14 +358,14 @@ set network.chilli.device='tun0'
 EOF
         uci commit network
 
-        echo "Network configuration applied successfully!" | lolcat
+        echo "Konfigurasi jaringan berhasil diterapkan!" | lolcat
     else
-        echo "Network configuration for br-hotspot already exists. Skipping..." | lolcat
+        echo "Konfigurasi jaringan untuk br-hotspot sudah ada. Melewatkan..." | lolcat
     fi
 
     # Check if the firewall zone 'hotspot' already exists
     if ! uci show firewall | grep -q "zone.*hotspot"; then
-        echo "Adding new firewall configuration for hotspot..." | lolcat
+        echo "Menambahkan konfigurasi firewall baru untuk hotspot..." | lolcat
 
         # Apply new firewall configuration
         uci batch <<EOF
@@ -360,9 +398,9 @@ set firewall.@forwarding[-1].dest='tun'
 EOF
         uci commit firewall
 
-        echo "Firewall configuration applied successfully!" | lolcat
+        echo "Konfigurasi firewall berhasil diterapkan!" | lolcat
     else
-        echo "Firewall configuration for hotspot already exists. Skipping..." | lolcat
+        echo "Konfigurasi firewall untuk hotspot sudah ada. Melewatkan..." | lolcat
         sleep 2
     fi
 }
@@ -400,10 +438,7 @@ while true; do
             echo "Installing PHP8 packages..." | lolcat
             sleep 2
             clear
-            until install_packages_php8; do
-                echo "Installation failed, retrying..." | lolcat
-                sleep 5
-            done
+            install_packages_php8
             configur_php8
             clear
             echo "Installation completed successfully!" | lolcat
@@ -412,10 +447,7 @@ while true; do
             echo "Installing PEAR packages..." | lolcat
             sleep 2
             clear
-            until install_packages_pear; do
-                echo "Installation failed, retrying..." | lolcat
-                sleep 5
-            done
+            install_packages_pear
             configur_pear
             clear
             echo "Installation completed successfully!" | lolcat
@@ -424,10 +456,7 @@ while true; do
             echo "Installing MariaDB packages..." | lolcat
             sleep 2
             clear
-            until install_packages_mariadb; do
-                echo "Installation failed, retrying..." | lolcat
-                sleep 5
-            done
+            install_packages_mariadb
             configur_mariadb
             clear
             echo "Installation completed successfully!" | lolcat
@@ -436,10 +465,7 @@ while true; do
             echo "Installing Radius Monitor packages..." | lolcat
             sleep 2
             clear
-            until install_packages_radmon; do
-                echo "Installation failed, retrying..." | lolcat
-                sleep 5
-            done
+            install_packages_radmon
             configur_radmon
             clear
             echo "Installation completed successfully!" | lolcat
@@ -452,10 +478,7 @@ while true; do
             echo "Installing PhpMyAdmin packages..." | lolcat
             sleep 2
             clear
-            until install_packages_phpmyadmin; do
-                echo "Installation failed, retrying..." | lolcat
-                sleep 5
-            done
+            install_packages_phpmyadmin
             configur_phpmyadmin
             clear
             echo "Installation completed successfully!" | lolcat
@@ -468,10 +491,7 @@ while true; do
             echo "Installing Freeradius3 packages..." | lolcat
             sleep 2
             clear
-            until install_packages_freeradius; do
-                echo "Installation failed, retrying..." | lolcat
-                sleep 5
-            done
+            install_packages_freeradius
             configur_freeradius
             clear
             echo "Installation completed successfully!" | lolcat
@@ -480,10 +500,7 @@ while true; do
             echo "Installing Chilli packages..." | lolcat
             sleep 2
             clear
-            until install_packages_chilli; do
-                echo "Installation failed, retrying..." | lolcat
-                sleep 5
-            done
+            install_packages_chilli
             configur_chilli
             clear
             echo "Installation completed successfully!" | lolcat
@@ -500,24 +517,16 @@ while true; do
             echo "Configuring Fix Upload Lost..." | lolcat
             sleep 2
             clear
-            curl -o /tmp/fix_upload.sh https://raw.githubusercontent.com/Maizil41/fix-upload/main/fix_upload.sh
-            bash /tmp/fix_upload.sh
+            cmdinstall "curl -o /tmp/fix_upload.sh https://raw.githubusercontent.com/Maizil41/fix-upload/main/fix_upload.sh" "Domnload Bahan Fix Upload"
+            cmdinstall "bash /tmp/fix_upload.sh" "Menerapkan Konfigurasi"
             clear
             echo "Installation completed successfully!" | lolcat
             ;;
         10)
             echo "Reloading Freeradius..." | lolcat
-            until /etc/init.d/radiusd restart; do
-                echo "Freeradius reload failed, retrying..." | lolcat
-            sleep 2
-            done
-            echo "Freeradius reloaded successfully!" | lolcat
+            cmdinstall "/etc/init.d/radiusd restart" "Reload Freeradius"
             echo "Reloading Chilli..." | lolcat
-            until /etc/init.d/chilli restart; do
-                echo "Chilli reload failed, retrying..." | lolcat
-                sleep 2
-            done
-            echo "Chilli reloaded successfully!" | lolcat
+            cmdinstall "/etc/init.d/chilli restart" "Reload Chilli"
             ;;
         11)
             echo "Exiting..." | lolcat
@@ -528,7 +537,7 @@ while true; do
             ;;
     esac
 
-    echo "Returning to menu..." | lolcat
+    echo "Kembali ke menu..." | lolcat
     cd /tmp
     sleep 2
 done
