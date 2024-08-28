@@ -7,6 +7,17 @@
 # RizkiKotet
 cd /tmp
 
+#===========================================================================================================================
+# Cek lolcat
+if ! opkg list-installed | grep -q "^lolcat "; then
+    echo "Update PKG And lolcat"
+    opkg update
+    opkg install lolcat
+fi
+#===========================================================================================================================
+
+#===========================================================================================================================
+# CMD Install
 cmdinstall() {
 local MAX_TIME=60
 while true; do
@@ -41,14 +52,8 @@ while true; do
   sleep 5
 done
 }
+#===========================================================================================================================
 
-#===========================================================================================================================
-if ! opkg list-installed | grep -q "^lolcat "; then
-    echo "Update PKG And lolcat"
-    opkg update
-    opkg install lolcat
-fi
-#===========================================================================================================================
 #===========================================================================================================================
 # Cek Update Di Github | HASH
 echo "Currently checking script updates..." | lolcat
@@ -67,12 +72,14 @@ if [ "$LOCAL_HASH" != "$REMOTE_HASH" ]; then
   chmod +x "$LOCAL_SCRIPT"
   exec "$LOCAL_SCRIPT"
 else
-  echo "The script is up to date, no update needed."
+  echo "The script is up to date, no update needed." | lolcat
   sleep 2
 fi
 rm -f "$TEMP_FILE"
 #===========================================================================================================================
+
 #===========================================================================================================================
+# Install PHP8 Pkg
 install_packages_php8() {
     cmdinstall "opkg update" "Update PKG"
     cmdinstall "opkg remove libgd --force-depends" "Remove LibGD"
@@ -91,15 +98,25 @@ configur_php8() {
     /etc/init.d/uhttpd restart
 }
 #===========================================================================================================================
+
 #===========================================================================================================================
+
 install_packages_pear() {
     cmdinstall "wget -O go-pear.phar https://pear.php.net/go-pear.phar" "Download Bahan Pear"
     ln -s /usr/bin/php-cli /usr/bin/php
     clear
 }
 configur_pear() {
+    echo "Tutorial:" | lolcat
+    echo " > 1. Saat ditanya '1-12, all or Enter to continue:', Klik Enter" | lolcat
+    echo " > 2. Kemudian Ketik 'Y' dan tekan Enter" | lolcat
+    echo " > 3. Lanjut tekan Enter lagi" | lolcat
+    echo ""
+    echo -n "Tekan Enter untuk melanjutkan ke instalasi: " | lolcat
+    read -r
+    echo ""
     php go-pear.phar
-    /root/pear/bin/pear install DB
+    cmdinstall "/root/pear/bin/pear install DB" "Install DB Pear"
     rm -rf go-pear.phar
 }
 #===========================================================================================================================
