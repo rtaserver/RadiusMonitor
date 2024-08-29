@@ -6,8 +6,8 @@
 # RTA-WRT
 # RizkiKotet
 
-script_version="v1.0.2"
-script_changelog="Perbaikan Freeradius Dan Lost Upload"
+script_version="v1.0.3"
+script_changelog="Perbaikan Freeradius Tidak Jalan"
 
 cd /tmp
 
