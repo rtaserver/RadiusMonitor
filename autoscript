@@ -6,8 +6,8 @@
 # RTA-WRT
 # RizkiKotet
 
-script_version="v1.0.3"
-script_changelog="Perbaikan Freeradius Tidak Jalan"
+script_version="v1.0.4"
+script_changelog="Ganti Login IP"
 
 cd /tmp
 
@@ -470,6 +470,11 @@ while true; do
     echo " > 10 - Reload Freeradius And Chilli" | lolcat
     echo " > 11 - Exit" | lolcat
     echo ""
+    echo "================================================" | lolcat
+    echo ""
+    echo ""
+    echo "  Notes: Rekomendasi Restart / Reboot OpenWrt"
+    echo "         Setelah Semua Installasi Selesai"
     echo "================================================" | lolcat
 
     echo -n "Silahkan pilih menu (1-11): " | lolcat
