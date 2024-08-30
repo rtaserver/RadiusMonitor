@@ -454,25 +454,23 @@ while true; do
     echo "    [*]    Radius Monitor By : Maizil  [*]" | lolcat
     echo "    [*]   Auto Script By : RizkiKotet  [*]" | lolcat
     echo ""
+    echo "================================================" | lolcat
     echo "  -> Version : ${script_version}" | lolcat
     echo "  -> Changelog : ${script_changelog}" | lolcat
-    echo ""
-    echo " > 1 - Install Packages PHP8" | lolcat
-    echo " > 2 - Install Packages PEAR DB" | lolcat
-    echo " > 3 - Install Packages MariaDB" | lolcat
-    echo " > 4 - Install Packages Radius Monitor + Database" | lolcat
-    echo " > 5 - Install Packages PhpMyAdmin" | lolcat
-    echo " > 6 - Install Packages Freeradius3 + Config" | lolcat
-    echo " > 7 - Install Packages Chilli + Config" | lolcat
-    echo " > 8 - Install Network Firewall Hotspot" | lolcat
-    echo ""
-    echo " > 9 - Fix Upload Bocor / Lost" | lolcat
-    echo " > 10 - Reload Freeradius And Chilli" | lolcat
-    echo " > 11 - Exit" | lolcat
-    echo ""
     echo "================================================" | lolcat
+    echo " > 1 - Install Packages PHP8"
+    echo " > 2 - Install Packages PEAR DB"
+    echo " > 3 - Install Packages MariaDB"
+    echo " > 4 - Install Packages Radius Monitor + Database"
+    echo " > 5 - Install Packages PhpMyAdmin"
+    echo " > 6 - Install Packages Freeradius3 + Config"
+    echo " > 7 - Install Packages Chilli + Config"
+    echo " > 8 - Install Network Firewall Hotspot"
     echo ""
-    echo ""
+    echo " > 9 - Fix Upload Bocor / Lost"
+    echo " > 10 - Reload Freeradius And Chilli"
+    echo " > 11 - Exit"
+    echo "================================================" | lolcat
     echo "  Notes: Rekomendasi Restart / Reboot OpenWrt"
     echo "         Setelah Semua Installasi Selesai"
     echo "================================================" | lolcat
