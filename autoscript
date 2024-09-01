@@ -6,8 +6,8 @@
 # RTA-WRT
 # RizkiKotet
 
-script_version="v1.0.4"
-script_changelog="Ganti Login IP"
+script_version="v1.0.5"
+script_changelog="Update Fix printTicket"
 
 cd /tmp
 
@@ -446,7 +446,7 @@ configur_netfirewall() {
 #===========================================================================================================================
 while true; do
     clear
-    echo "================================================" | lolcat
+    echo "================================================" | lolcat -a -d 5
     echo "           Auto Script | RadiusChilli           " | lolcat
     echo "================================================" | lolcat
     echo ""
@@ -468,14 +468,15 @@ while true; do
     echo " > 8 - Install Network Firewall Hotspot"
     echo ""
     echo " > 9 - Fix Upload Bocor / Lost"
-    echo " > 10 - Reload Freeradius And Chilli"
-    echo " > 11 - Exit"
+    echo " > 10 - Fix printTicket Error Display" 
+    echo " > 11 - Reload Freeradius And Chilli"
+    echo " > 12 - Exit"
     echo "================================================" | lolcat
     echo "  Notes: Rekomendasi Restart / Reboot OpenWrt"
     echo "         Setelah Semua Installasi Selesai"
     echo "================================================" | lolcat
 
-    echo -n "Silahkan pilih menu (1-11): " | lolcat
+    echo -n "Silahkan pilih menu (1-12): " | lolcat
     read choice
 
     case $choice in
@@ -568,12 +569,22 @@ while true; do
             echo "Installation completed successfully!" | lolcat
             ;;
         10)
+            echo "Configuring Fix printTicket..." | lolcat
+            sleep 2
+            clear
+            cmdinstall "opkg update" "Update PKG"
+            cmdinstall "opkg remove php8-mod-gd" "Remove php8-mod-gd"
+            cmdinstall "opkg install "http://archive.openwrt.org/releases/packages-$(cat /etc/openwrt_release | grep DISTRIB_RELEASE | awk -F\' '$2 > 0 {print substr($2,1,5)}')/$(cat /etc/openwrt_release | grep DISTRIB_ARCH | awk -F\' -F\' '{print$2}')/packages/php8-mod-gd_8.2.16-1_$(cat /etc/openwrt_release | grep DISTRIB_ARCH | awk -F\' -F\' '{print$2}').ipk"" "Install GD"
+            clear
+            echo "Installation completed successfully!" | lolcat
+            ;;
+        11)
             echo "Reloading Freeradius..." | lolcat
             cmdinstall "/etc/init.d/radiusd restart" "Reload Freeradius"
             echo "Reloading Chilli..." | lolcat
             cmdinstall "/etc/init.d/chilli restart" "Reload Chilli"
             ;;
-        11)
+        12)
             echo "Exiting..." | lolcat
             exit 0
             ;;
