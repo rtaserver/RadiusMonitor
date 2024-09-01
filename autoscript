@@ -480,7 +480,7 @@ while true; do
     echo "         Setelah Semua Installasi Selesai"
     echo "================================================" | lolcat
 
-    echo -n "Silahkan pilih menu (1-12): " | lolcat
+    echo -n "Silahkan pilih menu (1-12) or (13 For Update): " | lolcat
     read choice
 
     case $choice in
