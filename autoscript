@@ -6,17 +6,19 @@
 # RTA-WRT
 # RizkiKotet
 
-script_version="v1.0.5"
+script_version="v1.0.6"
 script_changelog="Update Fix printTicket"
 
 cd /tmp
 
 #===========================================================================================================================
-# Cek lolcat
-if ! opkg list-installed | grep -q "^lolcat "; then
-    echo "Update PKG And lolcat"
+# Cek lolcat dan git
+if ! opkg list-installed | grep -q "^lolcat " || ! opkg list-installed | grep -q "^git " || ! opkg list-installed | grep -q "^git-http "; then
+    echo "Update PKG and install lolcat and git"
     opkg update
     opkg install lolcat
+    opkg install git
+    opkg install git-http
 fi
 #===========================================================================================================================
 
@@ -57,6 +59,16 @@ while true; do
 done
 }
 #===========================================================================================================================
+
+
+clone_gh() {
+    local REPO_URL="$1"
+    local BRANCH="$2"
+    local TARGET_DIR="$3"
+    rm -rf $TARGET_DIR
+    echo "Cloning repository..." | lolcat
+    cmdinstall "git clone -b $BRANCH $REPO_URL $TARGET_DIR" "Clone Repo"
+}
 
 #===========================================================================================================================
 # Cek Update Di Github | HASH
@@ -155,13 +167,7 @@ EOF
 #===========================================================================================================================
 #===========================================================================================================================
 install_packages_radmon() {
-    cd /www
-    if [ -d "/www/RadiusMonitor" ]; then rm -rf /www/RadiusMonitor; fi
-    if [ -d "/www/RadiusMonitor-main" ]; then rm -rf /www/RadiusMonitor-main; fi
-    cmdinstall "wget -O radmon.zip https://github.com/rtaserver/RadiusMonitor/archive/refs/heads/main.zip" "Download Bahan Radius Monitor"
-    cmdinstall "unzip radmon.zip" "Mengekstrak Bahan"
-    rm -rf radmon.zip
-    mv RadiusMonitor-main RadiusMonitor
+    clone_gh "https://github.com/Maizil41/RadiusMonitor.git" "main" "/www/RadiusMonitor"
     clear
 }
 configur_radmon() {
@@ -239,12 +245,7 @@ install_packages_freeradius() {
     freeradius3-mod-realm freeradius3-mod-sql freeradius3-mod-sql-mysql freeradius3-mod-sqlcounter \
     freeradius3-mod-unix freeradius3-utils libfreetype wget-ssl curl unzip tar zoneinfo-asia" "Install Freeradius"
     clear
-    if [ -d "/tmp/radmoninstaller" ]; then rm -rf /tmp/radmoninstaller; fi
-    mkdir /tmp/radmoninstaller
-    cd /tmp/radmoninstaller
-    cmdinstall "wget https://github.com/rtaserver/RadiusMonitor/archive/refs/heads/radius.zip" "Download Bahan Freeradius"
-    cmdinstall "unzip radius.zip" "Mengekstrak Bahan"
-    rm -rf /tmp/radius.zip
+    clone_gh "https://github.com/rtaserver/RadiusMonitor.git" "radius" "/tmp/radmoninstaller"
     clear
 }
 configur_freeradius() {
@@ -295,12 +296,7 @@ install_packages_chilli() {
     cmdinstall "opkg update" "Update PKG"
     cmdinstall "opkg install coova-chilli" "Install Chilli"
     clear
-    if [ -d "/tmp/radmoninstaller" ]; then rm -rf /tmp/radmoninstaller; fi
-    mkdir /tmp/radmoninstaller
-    cd /tmp/radmoninstaller
-    cmdinstall "wget https://github.com/rtaserver/RadiusMonitor/archive/refs/heads/radius.zip" "Download Bahan Chilli"
-    cmdinstall "unzip radius.zip" "Mengekstrak Bahan"
-    rm -rf /tmp/radius.zip
+    clone_gh "https://github.com/rtaserver/RadiusMonitor.git" "radius" "/tmp/radmoninstaller"
     clear
 }
 configur_chilli() {
@@ -474,13 +470,14 @@ while true; do
     echo "================================================" | lolcat
     echo ""
     echo " > 13 - Update Script"
+    echo " > 14 - Update Radius Monitor"
     echo ""
     echo "================================================" | lolcat
     echo "  Notes: Rekomendasi Restart / Reboot OpenWrt"
     echo "         Setelah Semua Installasi Selesai"
     echo "================================================" | lolcat
 
-    echo -n "Silahkan pilih menu (1-12) or (13 For Update): " | lolcat
+    echo -n "Silahkan pilih menu (1-12) or (13-14 For Update): " | lolcat
     read choice
 
     case $choice in
@@ -595,6 +592,10 @@ while true; do
         13)
             echo "Update Script.." | lolcat
             bash -c "$(wget -qO - 'https://raw.githubusercontent.com/rtaserver/RadiusMonitor/radius/autoscript')"
+            ;;
+        14)
+            echo "Update Radius Monitor.." | lolcat
+            clone_gh "https://github.com/Maizil41/RadiusMonitor.git" "main" "/www/RadiusMonitor"
             ;;
         *)
             echo "Invalid option selected!" | lolcat
