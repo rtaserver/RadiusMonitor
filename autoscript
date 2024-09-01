@@ -446,7 +446,7 @@ configur_netfirewall() {
 #===========================================================================================================================
 while true; do
     clear
-    echo "================================================" | lolcat -a -d 5
+    echo "================================================" | lolcat
     echo "           Auto Script | RadiusChilli           " | lolcat
     echo "================================================" | lolcat
     echo ""
@@ -471,6 +471,10 @@ while true; do
     echo " > 10 - Fix printTicket Error Display" 
     echo " > 11 - Reload Freeradius And Chilli"
     echo " > 12 - Exit"
+    echo "================================================" | lolcat
+    echo ""
+    echo " > 13 - Update Script" | lolcat
+    echo ""
     echo "================================================" | lolcat
     echo "  Notes: Rekomendasi Restart / Reboot OpenWrt"
     echo "         Setelah Semua Installasi Selesai"
@@ -587,6 +591,10 @@ while true; do
         12)
             echo "Exiting..." | lolcat
             exit 0
+            ;;
+        13)
+            echo "Update Script.." | lolcat
+            bash -c "$(wget -qO - 'https://raw.githubusercontent.com/rtaserver/RadiusMonitor/radius/autoscript')"
             ;;
         *)
             echo "Invalid option selected!" | lolcat
