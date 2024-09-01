@@ -473,7 +473,7 @@ while true; do
     echo " > 12 - Exit"
     echo "================================================" | lolcat
     echo ""
-    echo " > 13 - Update Script" | lolcat
+    echo " > 13 - Update Script"
     echo ""
     echo "================================================" | lolcat
     echo "  Notes: Rekomendasi Restart / Reboot OpenWrt"
