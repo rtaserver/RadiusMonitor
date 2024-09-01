@@ -458,7 +458,7 @@ while true; do
     echo " > 2 - Install Packages PEAR DB"
     echo " > 3 - Install Packages MariaDB"
     echo " > 4 - Install Packages Radius Monitor + Database"
-    echo " > 5 - Install Packages PhpMyAdmin"
+    echo " > 5 - Install Packages PhpMyAdmin (Opsional)"
     echo " > 6 - Install Packages Freeradius3 + Config"
     echo " > 7 - Install Packages Chilli + Config"
     echo " > 8 - Install Network Firewall Hotspot"
