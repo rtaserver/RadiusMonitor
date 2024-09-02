@@ -16,7 +16,7 @@ jobs:
       with:
         repository: Maizil41/RadiusMonitor
         token: ${{ secrets.GITHUB_TOKEN }}
-        path: source
+        path: main
 
     - name: Checkout fork repository
       uses: actions/checkout@v3
@@ -27,7 +27,7 @@ jobs:
 
     - name: Unshallow the fork repository
       run: |
-        cd fork
+        cd main
         git fetch --unshallow
         git remote add upstream ../source
 
