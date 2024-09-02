@@ -25,11 +25,15 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         path: fork
 
+    - name: Unshallow the fork repository
+      run: |
+        cd fork
+        git fetch --unshallow
+        git remote add upstream ../source
+
     - name: Sync with upstream
       run: |
         cd fork
-        git remote add upstream ../source
-        git fetch upstream
+        git fetch upstream --depth=1  # Mendapatkan commit terbaru dari upstream
         git merge upstream/main
         git push origin main
-
