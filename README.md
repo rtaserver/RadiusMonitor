@@ -2,6 +2,9 @@ Paket Yang Terkait
 ---
 
 * lolcat
+* git
+* git-http
+* curl
 * mariadb
 * freeradius3
 * php8
@@ -15,7 +18,7 @@ Menggunakan Terminal OpenWrt / TTYD / PuTTY
 
 Install Lolcat
 ```bash
-opkg update && opkg install lolcat
+opkg update && opkg install lolcat git git-http
 ```
 Jalankan Script
 ```bash
