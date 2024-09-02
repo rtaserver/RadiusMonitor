@@ -11,29 +11,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout source repository
-      uses: actions/checkout@v3
-      with:
-        repository: Maizil41/RadiusMonitor
-        token: ${{ secrets.GITHUB_TOKEN }}
-        path: main
-
     - name: Checkout fork repository
       uses: actions/checkout@v3
       with:
         repository: ${{ github.repository }}
         token: ${{ secrets.GITHUB_TOKEN }}
-        path: fork
+        path: main
 
-    - name: Unshallow the fork repository
+    - name: Hapus semua file di repository fork
       run: |
         cd main
-        git fetch --unshallow
-        git remote add upstream ../source
+        git rm -rf .
+        rm -rf .git
 
-    - name: Sync with upstream
+    - name: Clone source repository
       run: |
-        cd fork
-        git fetch upstream --depth=1  # Mendapatkan commit terbaru dari upstream
-        git merge upstream/main
-        git push origin main
+        git clone https://github.com/Maizil41/RadiusMonitor.git main
+        cd main
+
+    - name: Push changes to fork
+      run: |
+        cd main
+        git add .
+        git commit -m "Sync fork with upstream"
+        git push origin main --force
