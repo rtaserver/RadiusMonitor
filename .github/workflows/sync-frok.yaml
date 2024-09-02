@@ -32,6 +32,9 @@ jobs:
     - name: Push changes to fork
       run: |
         cd main
+        git config user.name 'github-actions[bot]'
+        git config user.email 'github-actions[bot]@users.noreply.github.com'
         git add .
-        git commit -m "Sync fork with upstream"
+        git commit -m "Release: Auto sync"
         git push origin main --force
+        
