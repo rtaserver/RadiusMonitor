@@ -29,7 +29,16 @@ jobs:
         git clone https://github.com/Maizil41/RadiusMonitor.git main
         cd main
 
+    - name: Check for changes
+      run: |
+        cd main
+        if [ -z "$(git status --porcelain)" ]; then
+          echo "No changes detected, skipping commit and push."
+          exit 0
+        fi
+
     - name: Push changes to fork
+      if: ${{ success() }}
       run: |
         cd main
         git config user.name 'github-actions[bot]'
