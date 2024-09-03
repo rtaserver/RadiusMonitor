@@ -29,24 +29,12 @@ jobs:
         git clone https://github.com/Maizil41/RadiusMonitor.git main
         cd main
 
-    - name: Check for changes
-      id: check
-      run: |
-        cd main
-        if [ -z "$(git status --porcelain)" ]; then
-          echo "No changes detected, skipping commit and push."
-          echo "status=false" >> $GITHUB_OUTPUT
-        else
-          echo "status=true" >> $GITHUB_OUTPUT
-        fi
-
     - name: Push changes to fork
-      if: steps.check.outputs.status == 'true'
       run: |
         cd main
         git config user.name 'github-actions[bot]'
         git config user.email 'github-actions[bot]@users.noreply.github.com'
         git add .
         git commit -m "Release: Auto sync"
-        git push origin main --force
+        git push origin main
         
