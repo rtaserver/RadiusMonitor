@@ -2,7 +2,7 @@ name: Sync Fork
 
 on:
   schedule:
-    - cron: "*/10 * * * *"  # Setiap 10 menit
+    - cron: "*/30 * * * *" 
 
   workflow_dispatch:
 
@@ -26,8 +26,7 @@ jobs:
     - name: Clone source repository
       run: |
         git clone https://github.com/Maizil41/RadiusMonitor.git source_repo
-        mv source_repo/* .
-        mv source_repo/.* .
+        rsync -a --exclude='.git' source_repo/ .
         rm -rf source_repo
 
     - name: Push changes to fork
