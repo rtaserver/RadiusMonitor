@@ -218,7 +218,7 @@ configur_radmon() {
     read root_password
     echo ""
     mysql -u root -p"${root_password}" radius -e "SET FOREIGN_KEY_CHECKS = 0; $(mysql -u root -p"${root_password}" radius -e 'SHOW TABLES' | awk '{print "DROP TABLE IF EXISTS `" $1 "`;"}' | grep -v '^Tables' | tr '\n' ' ') SET FOREIGN_KEY_CHECKS = 1;"
-    mysql -u root -p"${root_password}" radius < /www/RadiusMonitor/radius_monitor.sql
+    mysql -u root -p"${root_password}" radius < /www/RadiusMonitor/radmon.sql
     cat <<'EOF' >/usr/lib/lua/luci/controller/radmon.lua
 module("luci.controller.radmon", package.seeall)
 function index()
