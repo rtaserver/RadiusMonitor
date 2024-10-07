@@ -150,6 +150,7 @@ install_packages_php8() {
 }
 configur_php8() {
     sed -i -E "s|memory_limit = [0-9]+M|memory_limit = 100M|g" /etc/php.ini
+    sed -i -E "s|display_errors = On|display_errors = Off|g" /etc/php.ini
     uci set uhttpd.main.index_page='index.php'
     uci set uhttpd.main.interpreter='.php=/usr/bin/php-cgi'
     uci commit uhttpd
