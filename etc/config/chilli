@@ -13,16 +13,15 @@ option interval 3600
 
 option tundev 'tun0'
 option dhcpif 'br-hotspot'
-option net 10.10.10.0/24
+option net 10.10.10.100/24
 option lease 86400
-option leaseplus 300
-option dns1 10.10.10.1
-option dns2 10.10.20.1
+option dns1 1.1.1.1
+option dns2 1.0.0.1
 
 ###############################################################################################
 
 option radiusserver1 '127.0.0.1'
-option radiusserver2 '127.0.0.1'
+option radiusserver2 ''
 option radiusauthport 1812
 option radiusacctport 1813
 option radiussecret 'testing123'
@@ -33,8 +32,8 @@ option radiusnasid 'nas01'
 option uamlisten 10.10.10.1
 option uamserver 'http://10.10.30.1/hotspotlogin/hotspotlogin.php'
 option uamsecret 'mutiara-net'
-option uamallowed '192.168.1.1'
-option uamdomain 'intergram.xyz,laksa19.github.io'
+option uamallowed '10.10.30.1'
+option uamdomain 'intergram.xyz'
 option uamanydns 1
 option uamaliasname 'login'
 option nouamsuccess 1
@@ -45,7 +44,8 @@ option coanoipcheck
 
 ###############################################################################################
 
-option macauth '1'
+#option macauth '1'
+#option macallowed ''
 
 ###############################################################################################
 
