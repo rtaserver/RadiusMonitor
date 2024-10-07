@@ -443,41 +443,8 @@ configur_netfirewall() {
     else
         echo "Forwarding from 'tun' to 'wan' already exists." | lolcat
     fi
-    
-    sleep 3
 
-    if ! uci show firewall | grep -q "firewall\.voucher="; then
-        echo "Adding 'voucher' zone..." | lolcat
-        uci set firewall.voucher=zone
-        uci set firewall.voucher.name='hotspot'
-        uci set firewall.voucher.input='ACCEPT'
-        uci set firewall.voucher.output='ACCEPT'
-        uci set firewall.voucher.forward='ACCEPT'
-        uci add_list firewall.voucher.network='voucher'
-    else
-        echo "'voucher' zone already exists." | lolcat
-    fi
-
-    sleep 3
-
-    forwarding_exists=false
-    for i in $(uci show firewall | grep -o "firewall.@forwarding\[[0-9]\+\]"); do
-        src=$(uci get ${i}.src)
-        dest=$(uci get ${i}.dest)
-        if [ "$src" = "hotspot" ] && [ "$dest" = "tun" ]; then
-            forwarding_exists=true
-            break
-        fi
-    done
-
-    if [ "$forwarding_exists" = false ]; then
-        echo "Adding forwarding from 'voucher' to 'tun'..." | lolcat
-        uci add firewall forwarding
-        uci set firewall.@forwarding[-1].src='hotspot'
-        uci set firewall.@forwarding[-1].dest='tun'
-    else
-        echo "Forwarding from 'voucher' to 'tun' already exists." | lolcat
-    fi
+    uci add_list firewall.@zone[0].network='voucher'
 
     uci commit firewall
 
