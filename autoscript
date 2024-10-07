@@ -8,8 +8,8 @@
 
 openwrt_arch=$(uname -m)
 openwrt_version=$(grep ^VERSION= /etc/os-release | cut -d '"' -f 2)
-script_version="v1.0.9"
-script_changelog="Update Fix Database MySqL"
+script_version="v1.1.0"
+script_changelog="Fixed - Last Edit: 08-10-2024"
 
 cd /tmp
 #===========================================================================================================================
@@ -509,15 +509,14 @@ while true; do
     echo " > 7 - Install Packages Chilli + Config"
     echo " > 8 - Install Network Firewall Hotspot"
     echo ""
-    echo " > 9 - Fix Upload Bocor / Lost"
-    echo " > 10 - Fix printTicket Error Display" 
-    echo " > 11 - Reload Freeradius And Chilli"
-    echo " > 12 - Exit"
+    echo " > 9 - Reload Freeradius And Chilli"
     echo "================================================" | lolcat
     echo ""
-    echo " > 13 - Update Script"
-    echo " > 14 - Update Radius Monitor"
+    echo " > 10 - Update Script"
+    echo " > 11 - Update Radius Monitor"
     echo ""
+    echo "================================================" | lolcat
+    echo " > X - Exit Script"
     echo "================================================" | lolcat
     echo "  Notes: Rekomendasi Restart / Reboot OpenWrt"
     echo "         Setelah Semua Installasi Selesai"
@@ -607,39 +606,16 @@ while true; do
             echo "Installation completed successfully!" | lolcat
             ;;
         9)
-            echo "Configuring Fix Upload Lost..." | lolcat
-            sleep 2
-            clear
-            cmdinstall "curl -o /tmp/fix_upload.sh https://raw.githubusercontent.com/Maizil41/fix-upload/main/fix_upload.sh" "Domnload Bahan Fix Upload"
-            cmdinstall "bash /tmp/fix_upload.sh" "Menerapkan Konfigurasi"
-            clear
-            echo "Installation completed successfully!" | lolcat
-            ;;
-        10)
-            echo "Configuring Fix printTicket..." | lolcat
-            sleep 2
-            clear
-            cmdinstall "opkg update" "Update PKG"
-            cmdinstall "opkg remove php8-mod-gd" "Remove php8-mod-gd"
-            cmdinstall "opkg install "http://archive.openwrt.org/releases/packages-$(cat /etc/openwrt_release | grep DISTRIB_RELEASE | awk -F\' '$2 > 0 {print substr($2,1,5)}')/$(cat /etc/openwrt_release | grep DISTRIB_ARCH | awk -F\' -F\' '{print$2}')/packages/php8-mod-gd_8.2.16-1_$(cat /etc/openwrt_release | grep DISTRIB_ARCH | awk -F\' -F\' '{print$2}').ipk"" "Install GD"
-            clear
-            echo "Installation completed successfully!" | lolcat
-            ;;
-        11)
             echo "Reloading Freeradius..." | lolcat
             cmdinstall "/etc/init.d/radiusd restart" "Reload Freeradius"
             echo "Reloading Chilli..." | lolcat
             cmdinstall "/etc/init.d/chilli restart" "Reload Chilli"
             ;;
-        12)
-            echo "Exiting..." | lolcat
-            exit
-            ;;
-        13)
+        10)
             echo "Update Script.." | lolcat
             bash -c "$(wget -qO - 'https://raw.githubusercontent.com/rtaserver/RadiusMonitor/radius/autoscript')"
             ;;
-        14)
+        11)
             echo "Update Radius Monitor.." | lolcat
             clone_gh "https://github.com/Maizil41/RadiusMonitor.git" "main" "/www/RadiusMonitor"
             echo "Menginstall Database Radius Monitor." | lolcat
@@ -647,6 +623,10 @@ while true; do
             read root_password
             echo ""
             mysql -u root -p"${root_password}" radius < /www/RadiusMonitor/radmon.sql
+            ;;
+        x|X)
+            echo "Exiting..." | lolcat
+            exit
             ;;
         *)
             echo "Invalid option selected!" | lolcat
