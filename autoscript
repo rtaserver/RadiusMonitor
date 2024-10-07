@@ -8,8 +8,8 @@
 
 openwrt_arch=$(uname -m)
 openwrt_version=$(grep ^VERSION= /etc/os-release | cut -d '"' -f 2)
-script_version="v1.0.7"
-script_changelog="Update Fix Clone | lolcat"
+script_version="v1.0.8"
+script_changelog="Update Fix Database | lolcat"
 
 cd /tmp
 #===========================================================================================================================
