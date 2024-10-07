@@ -8,8 +8,8 @@
 
 openwrt_arch=$(uname -m)
 openwrt_version=$(grep ^VERSION= /etc/os-release | cut -d '"' -f 2)
-script_version="v1.0.8"
-script_changelog="Update Fix Database | lolcat"
+script_version="v1.0.9"
+script_changelog="Update Fix Database MySqL"
 
 cd /tmp
 #===========================================================================================================================
@@ -210,6 +210,8 @@ EOF
 #===========================================================================================================================
 install_packages_radmon() {
     clone_gh "https://github.com/Maizil41/RadiusMonitor.git" "main" "/www/RadiusMonitor"
+    cd /tmp
+    cmdinstall "wget https://raw.githubusercontent.com/rtaserver/RadiusMonitor/refs/heads/radius/radius_monitor.sql" "Download SQL"
     clear
 }
 configur_radmon() {
@@ -218,6 +220,8 @@ configur_radmon() {
     read root_password
     echo ""
     mysql -u root -p"${root_password}" radius -e "SET FOREIGN_KEY_CHECKS = 0; $(mysql -u root -p"${root_password}" radius -e 'SHOW TABLES' | awk '{print "DROP TABLE IF EXISTS `" $1 "`;"}' | grep -v '^Tables' | tr '\n' ' ') SET FOREIGN_KEY_CHECKS = 1;"
+    mysql -u root -p"${root_password}" radius < /tmp/radius_monitor.sql
+    rm -rf /tmp/radius_monitor.sql
     mysql -u root -p"${root_password}" radius < /www/RadiusMonitor/radmon.sql
     cat <<'EOF' >/usr/lib/lua/luci/controller/radmon.lua
 module("luci.controller.radmon", package.seeall)
@@ -638,6 +642,11 @@ while true; do
         14)
             echo "Update Radius Monitor.." | lolcat
             clone_gh "https://github.com/Maizil41/RadiusMonitor.git" "main" "/www/RadiusMonitor"
+            echo "Menginstall Database Radius Monitor." | lolcat
+            echo -n "Masukan MariaDB root password: " | lolcat
+            read root_password
+            echo ""
+            mysql -u root -p"${root_password}" radius < /www/RadiusMonitor/radmon.sql
             ;;
         *)
             echo "Invalid option selected!" | lolcat
