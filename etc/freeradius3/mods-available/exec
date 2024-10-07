@@ -22,8 +22,12 @@
 #  See also "echo" for more sample configuration.
 #
 exec {
-	wait = no
-	input_pairs = request
-	shell_escape = yes
-	timeout = 10
+    wait = yes
+    input_pairs = request
+    output_pairs = reply
+    program = "/usr/bin/check_kuota.sh %{User-Name}"
+    shell_escape = yes
+    timeout = 10
 }
+
+

@@ -4,7 +4,7 @@
 # to support templates and languages easier.
 # Copyright (C) Enginx and Liran Tal 2007, 2008
 
-$ChilliSpot="Enginx hotspot";
+$ChilliSpot="mutiara-net";
 $title="$ChilliSpot Login";
 $centerUsername="Username";
 $centerPassword="Password";

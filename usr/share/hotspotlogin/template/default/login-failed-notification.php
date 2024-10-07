@@ -26,7 +26,7 @@
  */
 
 if ($reply == 'Your maximum never usage time has been reached') {
-echo "<center><div class='notice'>Voucher sudah kadaluarsa, silahkan beli lagi";
+echo "<center><div class='notice'>Voucher anda sudah kadaluarsa";
 }
 else if ($reply) {
 echo "<center><div class='notice'>$reply";

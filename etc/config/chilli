@@ -33,7 +33,7 @@ option uamlisten 10.10.10.1
 option uamserver 'http://10.10.30.1/hotspotlogin/hotspotlogin.php'
 option uamsecret 'mutiara-net'
 option uamallowed '10.10.30.1'
-option uamdomain 'intergram.xyz'
+option uamdomain 'intergram.xyz,maizil41.github.io'
 option uamanydns 1
 option uamaliasname 'login'
 option nouamsuccess 1

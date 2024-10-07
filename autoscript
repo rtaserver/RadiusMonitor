@@ -211,6 +211,7 @@ EOF
 #===========================================================================================================================
 install_packages_radmon() {
     clone_gh "https://github.com/Maizil41/RadiusMonitor.git" "main" "/www/RadiusMonitor"
+    clone_gh "https://github.com/Maizil41/radiusbilling.git" "main" "/www/raddash"
     cd /tmp
     cmdinstall "wget https://raw.githubusercontent.com/rtaserver/RadiusMonitor/refs/heads/radius/radius_monitor.sql" "Download SQL"
     clear
@@ -224,6 +225,7 @@ configur_radmon() {
     mysql -u root -p"${root_password}" radius < /tmp/radius_monitor.sql
     rm -rf /tmp/radius_monitor.sql
     mysql -u root -p"${root_password}" radius < /www/RadiusMonitor/radmon.sql
+    mysql -u root -p"${root_password}" radius < /www/raddash/raddash.sql
     cat <<'EOF' >/usr/lib/lua/luci/controller/radmon.lua
 module("luci.controller.radmon", package.seeall)
 function index()
@@ -586,11 +588,13 @@ while true; do
         11)
             echo "Update Radius Monitor.." | lolcat
             clone_gh "https://github.com/Maizil41/RadiusMonitor.git" "main" "/www/RadiusMonitor"
+            clone_gh "https://github.com/Maizil41/radiusbilling.git" "main" "/www/raddash"
             echo "Menginstall Database Radius Monitor." | lolcat
             echo -n "Masukan MariaDB root password: " | lolcat
             read root_password
             echo ""
             mysql -u root -p"${root_password}" radius < /www/RadiusMonitor/radmon.sql
+            mysql -u root -p"${root_password}" radius < /www/raddash/raddash.sql
             ;;
         x|X)
             echo "Exiting..." | lolcat

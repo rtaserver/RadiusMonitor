@@ -44,7 +44,7 @@
 #
 ######################################################################
 
-server mutiara-net {
+server default {
 #
 #  If you want the server to listen on additional addresses, or on
 #  additional ports, you can use multiple "listen" sections.
@@ -281,7 +281,12 @@ listen {
 #
 #  Make *sure* that 'preprocess' comes before any realm if you
 #  need to setup hints for the remote radius server
+#Authorize
 authorize {
+if (User-Name){
+if("%{sql:UPDATE radacct set AcctStopTime=ADDDATE(AcctStartTime,INTERVAL AcctSessionTime SECOND), AcctTerminateCause='Clear-Stale Session' WHERE UserName='%{User-Name}' and CallingStationId='%{Calling-Station-Id}' and AcctStopTime is NULL}"){
+}
+}
 	#
 	#  Take a User-Name, and perform some checks on it, for spaces and other
 	#  invalid characters.  If the User-Name appears invalid, reject the
@@ -679,6 +684,12 @@ accounting {
 #	Acct-Type Status-Server {
 #
 #	}
+    if (Acct-Terminate-Cause) {
+        update control {
+            &Tmp-String-0 := `/usr/bin/acct_log.sh %{User-Name} %{Acct-Terminate-Cause} %{Calling-Station-Id}`
+        }
+        exec
+    }
 }
 
 
@@ -698,6 +709,16 @@ session {
 #  Once we KNOW that the user has been authenticated, there are
 #  additional steps we can take.
 post-auth {
+    # Panggil modul exec yang telah dikonfigurasi
+    exec
+
+    # Menolak pengguna jika kuota habis
+    if (&reply:Reply-Message == "Kuota Anda Telah Habis") {
+        update reply {
+            Reply-Message := "Kuota Anda Telah Habis"
+        }
+        reject
+    }
 	#
 	#  If you need to have a State attribute, you can
 	#  add it here.  e.g. for later CoA-Request with
