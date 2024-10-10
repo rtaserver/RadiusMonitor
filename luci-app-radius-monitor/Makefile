@@ -13,7 +13,7 @@ define Package/$(PKG_NAME)
     SUBMENU:=3. Applications
     TITLE:=LuCI support for Radius Chilli
     PKGARCH:=all
-    DEPENDS:=+luci +luci-base +git +git-http +unzip
+    DEPENDS:=+luci +luci-base +git +git-http +unzip +dos2unix
     MAINTAINER:=rtaserver
 endef
 
@@ -39,6 +39,7 @@ endef
 define Package/$(PKG_NAME)/preinst
 #!/bin/sh
     cp -rf "/usr/share/hotspotlogin" "/tmp/hotspotlogin" >/dev/null 2>&1
+
     exit 0
 endef
 
@@ -48,6 +49,9 @@ define Package/$(PKG_NAME)/postinst
 cat <<EOF > /root/setup-radmon.log
 Installed luci-app-radius-monitor: $(PKG_VERSION)
 EOF
+dos2unix /etc/uci-defaults/80_setup_radmon
+dos2unix /etc/uci-defaults/99_setup_radmon
+exit 0
 endef
 
 # Pre-removal steps
