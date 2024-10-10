@@ -1,5 +1,0 @@
-#!/bin/bash
-dos2unix /etc/uci-defaults/80_setup_radmon
-dos2unix /etc/uci-defaults/99_setup_radmon
-rm -rf /etc/uci-defaults/70_first_radmon
-exit 0
