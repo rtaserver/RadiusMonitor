@@ -71,7 +71,7 @@ jobs:
         uses: openwrt/gh-action-sdk@main
         env:
           ARCH: ${{ matrix.arch }}-${{ inputs.release }}
-          PACKAGES: luci-app-radius-monitor
+          PACKAGES: luci-app-radiusmonitor
           NO_REFRESH_CHECK: true
 
       - name: Upload
