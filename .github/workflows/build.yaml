@@ -52,6 +52,7 @@ jobs:
           else
              echo "arch=['${{ inputs.arch }}']" >> $GITHUB_OUTPUT
           fi
+          echo "release=['${{ inputs.release }}']" >> $GITHUB_OUTPUT
 
   build:
     needs: prebuild
