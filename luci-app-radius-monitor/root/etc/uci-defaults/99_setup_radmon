@@ -34,46 +34,42 @@ uci commit uhttpd
 
 if grep -q "option enabled '0'" /etc/config/mysqld; then
     sed -i -E "s|option enabled '0'|option enabled '1'|g" /etc/config/mysqld
-fi
-
-if grep -q "# datadir		= /srv/mysql" /etc/mysql/conf.d/50-server.cnf; then
     sed -i -E "s|# datadir		= /srv/mysql|datadir	= /usr/share/mysql|g" /etc/mysql/conf.d/50-server.cnf
-fi
-
-if grep -q "127.0.0.1" /etc/mysql/conf.d/50-server.cnf; then
     sed -i -E "s|127.0.0.1|0.0.0.0|g" /etc/mysql/conf.d/50-server.cnf
-fi
 
-# Restart and reload mysqld
-/etc/init.d/mysqld restart
-/etc/init.d/mysqld reload
+    # Restart and reload mysqld
+    /etc/init.d/mysqld restart
+    /etc/init.d/mysqld reload
 
-# MySQL root password setup and permissions
-mysql -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('radius');"
-mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'radius';"
+    # MySQL root password setup and permissions
+    mysql -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('radius');"
+    mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'radius';"
 
-# Cleanup default MySQL setup
-mysql -u root -p"radius" <<EOF
+    # Cleanup default MySQL setup
+    mysql -u root -p"radius" <<EOF
 DELETE FROM mysql.user WHERE User='';
 DROP DATABASE IF EXISTS test;
 DELETE FROM mysql.db WHERE Db='test' OR Db='test_%';
 FLUSH PRIVILEGES;
 EOF
 
-# Create radius database and set permissions
-mysql -u root -p"radius" -e "CREATE DATABASE radius CHARACTER SET utf8"
-mysql -u root -p"radius" -e "GRANT ALL ON radius.* TO 'radius'@'localhost' IDENTIFIED BY 'radius' WITH GRANT OPTION"
+    # Create radius database and set permissions
+    mysql -u root -p"radius" -e "CREATE DATABASE radius CHARACTER SET utf8"
+    mysql -u root -p"radius" -e "GRANT ALL ON radius.* TO 'radius'@'localhost' IDENTIFIED BY 'radius' WITH GRANT OPTION"
 
-# Drop all tables in radius database if they exist
-mysql -u root -p"radius" radius -e "SET FOREIGN_KEY_CHECKS = 0; \
-    $(mysql -u root -p"radius" radius -e 'SHOW TABLES' | awk '{print "DROP TABLE IF EXISTS `" $1 "`;"}' | grep -v '^Tables' | tr '\n' ' ') \
-    SET FOREIGN_KEY_CHECKS = 1;"
+    # Drop all tables in radius database if they exist
+    mysql -u root -p"radius" radius -e "SET FOREIGN_KEY_CHECKS = 0; \
+        $(mysql -u root -p"radius" radius -e 'SHOW TABLES' | awk '{print "DROP TABLE IF EXISTS `" $1 "`;"}' | grep -v '^Tables' | tr '\n' ' ') \
+        SET FOREIGN_KEY_CHECKS = 1;"
+fi
 
 # Import SQL files into radius database
 if [ ! -e /etc/hotspotsetup ]; then
     mysql -u root -p"radius" radius < /radius_monitor.sql
     rm -rf /radius_monitor.sql
     touch /etc/hotspotsetup
+else
+    rm -rf /radius_monitor.sql
 fi
 mysql -u root -p"radius" radius < /www/RadiusMonitor/radmon.sql
 mysql -u root -p"radius" radius < /www/raddash/raddash.sql
