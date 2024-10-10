@@ -22,6 +22,24 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Prepare
+    # Preparation steps (if needed)
+endef
+
+define Build/Configure
+endef
+
+define Build/Compile
+endef
+
+define Package/$(PKG_NAME)/conffiles
+endef
+
+# Before package installation
+define Package/$(PKG_NAME)/preinst
+endef
+
+# After package and dependencies are installed
+define Package/$(PKG_NAME)/postinst
     # Install required packages
     echo "Checking and installing required packages..."
     INSTALL_LIST=""
@@ -79,23 +97,6 @@ define Build/Prepare
         cd /www/RadiusMonitor && git pull || { echo "Updating RadiusMonitor failed."; exit 1; }; \
     fi
 
-endef
-
-define Build/Configure
-endef
-
-define Build/Compile
-endef
-
-define Package/$(PKG_NAME)/conffiles
-endef
-
-# Before package installation
-define Package/$(PKG_NAME)/preinst
-endef
-
-# After package and dependencies are installed
-define Package/$(PKG_NAME)/postinst
 endef
 
 # Before package removal
