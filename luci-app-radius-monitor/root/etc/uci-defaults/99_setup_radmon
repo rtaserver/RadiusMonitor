@@ -1,8 +1,4 @@
-#!/bin/bash
-
-cleanup(){
-    rm -rf /etc/uci-defaults/99_setup_radmon
-}
+#!/bin/sh
 
 
 chmod +x /usr/bin/acct_log.sh
@@ -121,5 +117,5 @@ if [ -d "/tmp/hotspotlogin" ]; then
     ln -s /usr/share/hotspotlogin /www/hotspotlogin
 fi
 
-cleanup
+rm -rf /etc/uci-defaults/99_setup_radmon
 exit 0
