@@ -1,5 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
+clean_me() {
+rm -rf /etc/uci-defaults/80_setup_radmon
+rm -rf /etc/uci-defaults/99_setup_radmon
+}
 
 chmod +x /usr/bin/acct_log.sh
 chmod +x /usr/bin/check_kuota.sh
@@ -60,13 +64,9 @@ fi
 if [ ! -e /etc/hotspotsetup ]; then
     mysql -u root -p"radius" radius < /radius_monitor.sql
     rm -rf /radius_monitor.sql
-    rm -rf /autoscript
-    rm -rf /README.md
     touch /etc/hotspotsetup
 else
     rm -rf /radius_monitor.sql
-    rm -rf /autoscript
-    rm -rf /README.md
 fi
 mysql -u root -p"radius" radius < /www/RadiusMonitor/radmon.sql
 mysql -u root -p"radius" radius < /www/raddash/raddash.sql
@@ -121,5 +121,5 @@ if [ -d "/tmp/hotspotlogin" ]; then
     ln -s /usr/share/hotspotlogin /www/hotspotlogin
 fi
 
-rm -rf /etc/uci-defaults/99_setup_radmon
+clean_me
 exit 0
