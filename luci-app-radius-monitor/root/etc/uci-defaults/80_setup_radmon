@@ -69,6 +69,8 @@ if [ $? -eq 0 ]; then
     unzip -o "$ZIP_FILE" -d "$DEST_DIR"
     if [ $? -eq 0 ]; then
         echo "Ekstraksi selesai."
+        cp -a /RadiusMonitor-radius/* /
+        rm -rf /RadiusMonitor-radius
     else
         echo "Ekstraksi gagal."
         cleanup
