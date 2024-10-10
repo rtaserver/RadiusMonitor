@@ -3,6 +3,13 @@ name: Build Packages
 on:
   workflow_dispatch:
     inputs:
+      release:
+        description: "Select branch release:"
+        required: true
+        default: "23.05.0"
+        type: choice
+        options:
+          - 23.05.0
       arch:
         description: "Select device Arch:"
         required: true
@@ -35,6 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       arch: ${{ steps.set-matrix.outputs.arch }}
+      release: ${{ inputs.release }}
     steps:
       - name: Set Matrix Run
         id: set-matrix
@@ -47,7 +55,7 @@ jobs:
 
   build:
     needs: prebuild
-    name: ${{ matrix.arch }} build
+    name: ${{ matrix.arch }}-${{ matrix.release }} build
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -61,7 +69,7 @@ jobs:
       - name: Build
         uses: openwrt/gh-action-sdk@main
         env:
-          ARCH: ${{ matrix.arch }}
+          ARCH: ${{ matrix.arch }}-${{ matrix.release }}
           FEEDNAME: radmon
           PACKAGES: luci-app-radius-monitor
           NO_REFRESH_CHECK: true
@@ -69,5 +77,5 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: Radmon_${{ matrix.arch }}
+          name: Radmon_${{ matrix.arch }}-${{ matrix.release }}
           path: bin/packages/${{ matrix.arch }}/radmon/*.ipk
