@@ -1,7 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
 clean_me() {
-rm -rf /etc/uci-defaults/80_setup_radmon
 rm -rf /etc/uci-defaults/99_setup_radmon
 }
 

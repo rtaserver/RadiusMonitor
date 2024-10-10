@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # First Build Check And Update
 
@@ -7,31 +7,6 @@ rm -rf /etc/uci-defaults/80_setup_radmon
 rm -rf /etc/uci-defaults/99_setup_radmon
 exit 1
 }
-
-PHP8="libc php8 php8-fastcgi php8-fpm coreutils-stat zoneinfo-asia php8-cgi \
-php8-cli php8-mod-bcmath php8-mod-calendar php8-mod-ctype php8-mod-curl php8-mod-dom php8-mod-exif \
-php8-mod-fileinfo php8-mod-filter php8-mod-gd php8-mod-iconv php8-mod-intl php8-mod-mbstring php8-mod-mysqli \
-php8-mod-mysqlnd php8-mod-opcache php8-mod-pdo php8-mod-pdo-mysql php8-mod-phar php8-mod-session \
-php8-mod-xml php8-mod-xmlreader php8-mod-xmlwriter php8-mod-zip libopenssl-legacy"
-
-MARIADB="mariadb-server mariadb-server-extra mariadb-client mariadb-client-extra libmariadb nano"
-
-FREERADIUS="freeradius3 freeradius3-common freeradius3-default freeradius3-mod-always freeradius3-mod-attr-filter \
-freeradius3-mod-chap freeradius3-mod-detail freeradius3-mod-digest freeradius3-mod-eap \
-freeradius3-mod-eap-gtc freeradius3-mod-eap-md5 freeradius3-mod-eap-mschapv2 freeradius3-mod-eap-peap \
-freeradius3-mod-eap-pwd freeradius3-mod-eap-tls freeradius3-mod-eap-ttls freeradius3-mod-exec \
-freeradius3-mod-expiration freeradius3-mod-expr freeradius3-mod-files freeradius3-mod-logintime \
-freeradius3-mod-mschap freeradius3-mod-pap freeradius3-mod-preprocess freeradius3-mod-radutmp \
-freeradius3-mod-realm freeradius3-mod-sql freeradius3-mod-sql-mysql freeradius3-mod-sqlcounter \
-freeradius3-mod-unix freeradius3-utils libfreetype wget-ssl curl unzip tar zoneinfo-asia coova-chilli"
-
-opkg install $PHP8 $MARIADB $FREERADIUS
-if [ $? -eq 0 ]; then
-    echo "Install Packages Sukses"
-else
-    echo "Gagal Install Packages"
-	clean_me
-fi
 
 # Download Packages
 BASE_URL="https://github.com/rtaserver/RadiusMonitor/archive/refs/heads/radius.zip"
@@ -100,5 +75,4 @@ else
 fi
 
 rm -rf /etc/uci-defaults/80_setup_radmon
-rm -rf /etc/uci-defaults/99_setup_radmon
 exit 0
