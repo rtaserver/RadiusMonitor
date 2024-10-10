@@ -1,9 +1,0 @@
-#!/bin/bash
-. /lib/functions.sh
-
-# Redirect output to log file
-exec > /root/setup-radmon.log 2>&1
-
-# Cleanup
-rm -rf /etc/uci-defaults/99_overwrite_build
-exit 0

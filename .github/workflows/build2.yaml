@@ -67,29 +67,29 @@ jobs:
           echo "src-git routing https://git.openwrt.org/feed/routing.git;openwrt-${{ env.sdk_ver }}"  >> feeds.conf
           echo "src-git radmon https://github.com/rtaserver/RadiusMonitor.git;ipk" >> feeds.conf
           ./scripts/feeds update -a
-          echo "CONFIG_PACKAGE_luci-app-radiusmonitor=m" > .config
-          ./scripts/feeds install -d n luci-app-radiusmonitor
+          echo "CONFIG_PACKAGE_luci-app-radius-monitor=m" > .config
+          ./scripts/feeds install -d n luci-app-radius-monitor
           make download -j8
 
       - name: Configure Radmon
         run: |
           cd sdk
           ./scripts/feeds update radmon
-          ./scripts/feeds install luci-app-radiusmonitor
+          ./scripts/feeds install luci-app-radius-monitor
           echo "CONFIG_ALL_NONSHARED=n" > .config
           echo "CONFIG_ALL_KMODS=n" >> .config
           echo "CONFIG_ALL=n" >> .config
           echo "CONFIG_AUTOREMOVE=n" >> .config
           echo "CONFIG_LUCI_LANG_zh_Hans=n" >> .config
-          echo "CONFIG_PACKAGE_luci-app-radiusmonitor=m" >> .config
+          echo "CONFIG_PACKAGE_luci-app-radius-monitor=m" >> .config
           make defconfig
   
       - name: Compile Radmon
         id: compile
         run: |
           cd sdk
-          echo "make package/luci-app-radiusmonitor/{clean,compile} -j$(nproc)"
-          make package/luci-app-radiusmonitor/{clean,compile} -j$(nproc)
+          echo "make package/luci-app-radius-monitor/{clean,compile} -j$(nproc)"
+          make package/luci-app-radius-monitor/{clean,compile} -j$(nproc)
           mv bin/packages/x86_64/radmon/ ../
           rm .config .config.old
           cd ../radmon
@@ -101,7 +101,7 @@ jobs:
       - name: Delivering Package
         uses: actions/upload-artifact@v4
         with:
-          name: luci-app-radiusmonitor-release
+          name: luci-app-radius-monitor-release
           path: ${{ env.FIRMWARE }}/radmon/*.ipk
 
       - name: Generate new tag & release

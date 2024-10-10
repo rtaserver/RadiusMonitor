@@ -38,7 +38,27 @@ on:
           - x86_64
 
 jobs:
+  Get-Version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      current_version: ${{ steps.current_version.outputs.version }}
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: New Version
+        id: version
+        run: |
+          echo "version=$(grep 'PKG_VERSION:=' ./Makefile |awk -F '=' '{print $2}')" >> $GITHUB_OUTPUT
+          echo "New Version: $(grep 'PKG_VERSION:=' ./Makefile |awk -F '=' '{print $2}')"
+  
   prebuild:
+    needs: Get-Version
     runs-on: ubuntu-latest
     outputs:
       arch: ${{ steps.set-matrix.outputs.arch }}
@@ -71,11 +91,21 @@ jobs:
         uses: openwrt/gh-action-sdk@main
         env:
           ARCH: ${{ matrix.arch }}-${{ inputs.release }}
-          PACKAGES: luci-app-radiusmonitor
+          FEEDNAME: radiusmonitor
+          PACKAGES: luci-app-radius-monitor
           NO_REFRESH_CHECK: true
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: Radmon_${{ matrix.arch }}-${{ inputs.release }}
-          path: bin/packages/${{ matrix.arch }}/packages/*-radius-monitor*.ipk
+          path: bin/packages/${{ matrix.arch }}/radiusmonitor/*.ipk
+
+      - name: Generate new tag & release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          prerelease: true
+          files: bin/packages/${{ matrix.arch }}/radiusmonitor/*.ipk
+          tag_name: "v${{ needs.Get-Version.outputs.version }}-beta"
