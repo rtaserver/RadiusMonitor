@@ -1,7 +1,12 @@
 #!/bin/bash
 . /lib/functions.sh
 
-CHMOD +x
+# Redirect output to log file
+exec > /root/setup-radmon.log 2>&1
+
+chmod +x /usr/bin/acct_log.sh
+chmod +x /usr/bin/check_kuota.sh
+chmod +x /usr/bin/client_check.sh
 
 # ===========================================================================================================
 # SETUP PHP configuration
@@ -110,7 +115,6 @@ grep -qxF '/etc/init.d/chilli restart' /etc/rc.local || sed -i '/exit 0/i /etc/i
 # ===========================================================================================================
 # Hotspot Pages
 [ ! -L /www/hotspotlogin ] && ln -s /usr/share/hotspotlogin /www/hotspotlogin
-
 
 #Restore
 if [ -d "/tmp/hotspotlogin" ]; then
