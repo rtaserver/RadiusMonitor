@@ -2,40 +2,6 @@ name: Build Packages
 
 on:
   workflow_dispatch:
-    inputs:
-      release:
-        description: "Select branch release:"
-        required: true
-        default: "23.05.0"
-        type: choice
-        options:
-          - 23.05.0
-      arch:
-        description: "Select device Arch:"
-        required: true
-        default: "all"
-        type: choice
-        options:
-          - all
-          - arm_cortex-a5_vfpv4
-          - arm_cortex-a7_neon-vfpv4
-          - arm_cortex-a8_vfpv3
-          - arm_cortex-a9
-          - arm_cortex-a9_vfpv3-d16
-          - arm_cortex-a9_neon
-          - arm_cortex-a15_neon-vfpv4
-          - aarch64_cortex-a53
-          - aarch64_cortex-a72
-          - aarch64_generic
-          - mips_24kc
-          - mips_4kec
-          - mips_mips32
-          - mipsel_24kc
-          - mipsel_24kc_24kf
-          - mipsel_74kc
-          - mips64_octeonplus
-          - i386_pentium4
-          - x86_64
 
 jobs:
   Get-Version:
@@ -44,7 +10,6 @@ jobs:
       contents: write
     outputs:
       version: ${{ steps.version.outputs.version }}
-      current_version: ${{ steps.current_version.outputs.version }}
     steps:
       - name: Clone Repository
         uses: actions/checkout@v4
@@ -54,33 +19,13 @@ jobs:
       - name: New Version
         id: version
         run: |
-          echo "version=$(grep 'PKG_VERSION:=' ./Makefile |awk -F '=' '{print $2}')" >> $GITHUB_OUTPUT
-          echo "New Version: $(grep 'PKG_VERSION:=' ./Makefile |awk -F '=' '{print $2}')"
+          echo "version=$(grep 'PKG_VERSION:=' ./luci-app-radius-monitor/Makefile |awk -F '=' '{print $2}')" >> $GITHUB_OUTPUT
+          echo "New Version: $(grep 'PKG_VERSION:=' ./luci-app-radius-monitor/Makefile |awk -F '=' '{print $2}')"
   
-  prebuild:
-    needs: Get-Version
-    runs-on: ubuntu-latest
-    outputs:
-      arch: ${{ steps.set-matrix.outputs.arch }}
-    steps:
-      - name: Set Matrix Run
-        id: set-matrix
-        run: |
-          if [ "${{ inputs.arch }}" == "all" ]; then
-             echo "arch=['arm_cortex-a5_vfpv4','arm_cortex-a7_neon-vfpv4','arm_cortex-a8_vfpv3','arm_cortex-a9','arm_cortex-a9_vfpv3-d16','arm_cortex-a9_neon','arm_cortex-a15_neon-vfpv4','aarch64_cortex-a53','aarch64_cortex-a72','aarch64_generic','mips_24kc','mips_4kec','mips_mips32','mipsel_24kc','mipsel_24kc_24kf','mipsel_74kc','mips64_octeonplus','i386_pentium4','x86_64']" >> $GITHUB_OUTPUT
-          else
-             echo "arch=['${{ inputs.arch }}']" >> $GITHUB_OUTPUT
-          fi
-
   build:
-    needs: prebuild
-    name: ${{ matrix.arch }}-${{ inputs.release }} build
+    needs: Get-Version
+    name: Build IPK Radius Monitor
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: ${{ fromJSON(needs.prebuild.outputs.arch) }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -90,7 +35,7 @@ jobs:
       - name: Build
         uses: openwrt/gh-action-sdk@main
         env:
-          ARCH: ${{ matrix.arch }}-${{ inputs.release }}
+          ARCH: x86_64-23.05.0
           FEEDNAME: radiusmonitor
           PACKAGES: luci-app-radius-monitor
           NO_REFRESH_CHECK: true
@@ -98,8 +43,8 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: Radmon_${{ matrix.arch }}-${{ inputs.release }}
-          path: bin/packages/${{ matrix.arch }}/radiusmonitor/*.ipk
+          name: IPK_RADMON
+          path: bin/packages/x86_64/radiusmonitor/*.ipk
 
       - name: Generate new tag & release
         uses: softprops/action-gh-release@v2
@@ -107,5 +52,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           prerelease: true
-          files: bin/packages/${{ matrix.arch }}/radiusmonitor/*.ipk
+          files: bin/packages/x86_64/radiusmonitor/*.ipk
           tag_name: "v${{ needs.Get-Version.outputs.version }}-beta"
