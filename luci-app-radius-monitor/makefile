@@ -15,6 +15,7 @@ define Package/$(PKG_NAME)
     TITLE:=LuCI support for Radius Chilli
     PKGARCH:=all
     DEPENDS:=+luci +luci-base +git +git-http +libc +php8 +mariadb +freeradius3
+	MAINTAINER:=rtaserver
 endef
 
 define Package/$(PKG_NAME)/description
@@ -22,7 +23,6 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Prepare
-    # Preparation steps (if needed)
 endef
 
 define Build/Configure
