@@ -23,6 +23,9 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Prepare
+	$(CP) $(CURDIR)/root $(PKG_BUILD_DIR)
+	$(CP) $(CURDIR)/luasrc $(PKG_BUILD_DIR)
+	exit 0
 endef
 
 define Build/Configure
@@ -36,6 +39,9 @@ endef
 
 # Pre-install steps
 define Package/$(PKG_NAME)/preinst
+#!/bin/sh
+	cp -rf "/usr/share/hotspotlogin" "/tmp/hotspotlogin" >/dev/null 2>&1
+	exit 0
 endef
 
 # Post-install steps
@@ -95,17 +101,31 @@ define Package/$(PKG_NAME)/postinst
     
     [ ! -d /www/RadiusMonitor ] && git clone https://github.com/Maizil41/RadiusMonitor /www/RadiusMonitor || \
         (cd /www/RadiusMonitor && git pull)
+    exit 0
 endef
 
 # Pre-removal steps
 define Package/$(PKG_NAME)/prerm
+#!/bin/sh
+	/etc/init.d/radiusd stop
+    /etc/init.d/chilli stop
+	cp -rf "/usr/share/hotspotlogin" "/tmp/hotspotlogin" >/dev/null 2>&1
+	exit 0
 endef
 
 # Post-removal steps
 define Package/$(PKG_NAME)/postrm
+#!/bin/sh
+	rm -rf /www/RadiusMonitor >/dev/null 2>&1
+	rm -rf /www/raddash >/dev/null 2>&1
+	rm -rf /www/hotspotlogin >/dev/null 2>&1
+	rm -rf /usr/share/hotspotlogin >/dev/null 2>&1
+	exit 0
 endef
 
 define Package/$(PKG_NAME)/install
+	$(CP) $(PKG_BUILD_DIR)/root/* $(1)/
+	$(CP) $(PKG_BUILD_DIR)/luasrc/* $(1)/usr/lib/lua/luci/
 endef
 
 include $(TOPDIR)/feeds/luci/luci.mk

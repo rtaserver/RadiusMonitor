@@ -110,7 +110,15 @@ grep -qxF '/etc/init.d/chilli restart' /etc/rc.local || sed -i '/exit 0/i /etc/i
 # ===========================================================================================================
 # Hotspot Pages
 [ ! -L /www/hotspotlogin ] && ln -s /usr/share/hotspotlogin /www/hotspotlogin
-    
+
+
+#Restore
+if [ -d "/tmp/hotspotlogin" ]; then
+    rm -rf /www/hotspotlogin
+    rm -rf /usr/share/hotspotlogin
+    mv /tmp/hotspotlogin /usr/share/hotspotlogin
+    ln -s /usr/share/hotspotlogin /www/hotspotlogin
+fi
 
 # Cleanup
 rm -rf /etc/uci-defaults/80_setup_radmon
