@@ -1,8 +1,12 @@
 #!/bin/bash
-. /lib/functions.sh
 
 # Redirect output to log file
 exec > /root/setup-radmon.log 2>&1
+
+cleanup(){
+    rm -rf /etc/uci-defaults/99_setup_radmon
+}
+
 
 chmod +x /usr/bin/acct_log.sh
 chmod +x /usr/bin/check_kuota.sh
@@ -124,6 +128,5 @@ if [ -d "/tmp/hotspotlogin" ]; then
     ln -s /usr/share/hotspotlogin /www/hotspotlogin
 fi
 
-# Cleanup
-rm -rf /etc/uci-defaults/80_setup_radmon
+cleanup
 exit 0
