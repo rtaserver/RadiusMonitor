@@ -13,7 +13,6 @@ define Package/$(PKG_NAME)
     CATEGORY:=LuCI
     SUBMENU:=3. Applications
     TITLE:=LuCI support for Radius Chilli
-    PKGARCH:=all
     DEPENDS:=+luci +luci-base +git +git-http
     MAINTAINER:=rtaserver
 endef
