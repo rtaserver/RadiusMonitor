@@ -5,11 +5,54 @@ on:
     types: [published]
 
 jobs:
+  Get-Version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ipk
+
+      - name: New Version
+        id: version
+        run: |
+          echo "version=$(grep 'PKG_VERSION:=' ./luci-app-radius-monitor/Makefile |awk -F '=' '{print $2}')" >> $GITHUB_OUTPUT
+          echo "New Version: $(grep 'PKG_VERSION:=' ./luci-app-radius-monitor/Makefile |awk -F '=' '{print $2}')"
+  
+  build:
+    needs: Get-Version
+    name: Build IPK Radius Monitor
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ipk
+
+      - name: Build
+        uses: openwrt/gh-action-sdk@main
+        env:
+          ARCH: x86_64-23.05.0
+          FEEDNAME: radiusmonitor
+          PACKAGES: luci-app-radius-monitor
+          NO_REFRESH_CHECK: true
+
+      - name: Generate new tag & release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: bin/packages/x86_64/radiusmonitor/*.ipk
+
   notify:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Get release info
         id: release-info
