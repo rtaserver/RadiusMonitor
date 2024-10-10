@@ -1,0 +1,117 @@
+#!/bin/bash
+. /lib/functions.sh
+
+CHMOD +x
+
+# ===========================================================================================================
+# SETUP PHP configuration
+
+if grep -qE "memory_limit = [0-9]+M" /etc/php.ini; then
+    sed -i -E "s|memory_limit = [0-9]+M|memory_limit = 100M|g" /etc/php.ini
+fi
+
+if grep -q "display_errors = On" /etc/php.ini; then
+    sed -i -E "s|display_errors = On|display_errors = Off|g" /etc/php.ini
+fi
+
+uci get uhttpd.main.index_page | grep -q 'index.php' || uci set uhttpd.main.index_page='index.php'
+uci get uhttpd.main.interpreter | grep -q '.php=/usr/bin/php-cgi' || uci set uhttpd.main.interpreter='.php=/usr/bin/php-cgi'
+
+uci commit uhttpd
+/etc/init.d/uhttpd restart
+
+# ===========================================================================================================
+# SETUP MYSQLD
+
+if grep -q "option enabled '0'" /etc/config/mysqld; then
+    sed -i -E "s|option enabled '0'|option enabled '1'|g" /etc/config/mysqld
+fi
+
+if grep -q "# datadir		= /srv/mysql" /etc/mysql/conf.d/50-server.cnf; then
+    sed -i -E "s|# datadir		= /srv/mysql|datadir	= /usr/share/mysql|g" /etc/mysql/conf.d/50-server.cnf
+fi
+
+if grep -q "127.0.0.1" /etc/mysql/conf.d/50-server.cnf; then
+    sed -i -E "s|127.0.0.1|0.0.0.0|g" /etc/mysql/conf.d/50-server.cnf
+fi
+
+# Restart and reload mysqld
+/etc/init.d/mysqld restart
+/etc/init.d/mysqld reload
+
+# MySQL root password setup and permissions
+mysql -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('radius');"
+mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'radius';"
+
+# Cleanup default MySQL setup
+mysql -u root -p"radius" <<EOF
+DELETE FROM mysql.user WHERE User='';
+DROP DATABASE IF EXISTS test;
+DELETE FROM mysql.db WHERE Db='test' OR Db='test_%';
+FLUSH PRIVILEGES;
+EOF
+
+# Create radius database and set permissions
+mysql -u root -p"radius" -e "CREATE DATABASE radius CHARACTER SET utf8"
+mysql -u root -p"radius" -e "GRANT ALL ON radius.* TO 'radius'@'localhost' IDENTIFIED BY 'radius' WITH GRANT OPTION"
+
+# Drop all tables in radius database if they exist
+mysql -u root -p"radius" radius -e "SET FOREIGN_KEY_CHECKS = 0; \
+    $(mysql -u root -p"radius" radius -e 'SHOW TABLES' | awk '{print "DROP TABLE IF EXISTS `" $1 "`;"}' | grep -v '^Tables' | tr '\n' ' ') \
+    SET FOREIGN_KEY_CHECKS = 1;"
+
+# Import SQL files into radius database
+if [ ! -e /etc/hotspotsetup ]; then
+    mysql -u root -p"radius" radius < /radius_monitor.sql
+    rm -rf /radius_monitor.sql
+    touch /etc/hotspotsetup
+fi
+mysql -u root -p"radius" radius < /www/RadiusMonitor/radmon.sql
+mysql -u root -p"radius" radius < /www/raddash/raddash.sql
+
+# ===========================================================================================================
+# SETUP FREERADIUS
+
+# Stop Freeradius
+/etc/init.d/radiusd stop
+
+cd /etc/freeradius3/mods-enabled
+
+[ ! -L always ] && ln -s ../mods-available/always
+[ ! -L attr_filter ] && ln -s ../mods-available/attr_filter
+[ ! -L chap ] && ln -s ../mods-available/chap
+[ ! -L detail ] && ln -s ../mods-available/detail
+[ ! -L digest ] && ln -s ../mods-available/digest
+[ ! -L eap ] && ln -s ../mods-available/eap
+[ ! -L exec ] && ln -s ../mods-available/exec
+[ ! -L expiration ] && ln -s ../mods-available/expiration
+[ ! -L expr ] && ln -s ../mods-available/expr
+[ ! -L files ] && ln -s ../mods-available/files
+[ ! -L logintime ] && ln -s ../mods-available/logintime
+[ ! -L mschap ] && ln -s ../mods-available/mschap
+[ ! -L pap ] && ln -s ../mods-available/pap
+[ ! -L preprocess ] && ln -s ../mods-available/preprocess
+[ ! -L radutmp ] && ln -s ../mods-available/radutmp
+[ ! -L realm ] && ln -s ../mods-available/realm
+[ ! -L sql ] && ln -s ../mods-available/sql
+[ ! -L sradutmp ] && ln -s ../mods-available/sradutmp
+[ ! -L unix ] && ln -s ../mods-available/unix
+
+cd /etc/freeradius3/sites-enabled
+
+[ ! -L default ] && ln -s ../sites-available/default
+[ ! -L inner-tunnel ] && ln -s ../sites-available/inner-tunnel
+
+# Cek Lokal Startup
+grep -qxF '/etc/init.d/radiusd restart' /etc/rc.local || sed -i '/exit 0/i /etc/init.d/radiusd restart' /etc/rc.local
+grep -qxF '/etc/init.d/chilli restart' /etc/rc.local || sed -i '/exit 0/i /etc/init.d/chilli restart' /etc/rc.local
+
+
+# ===========================================================================================================
+# Hotspot Pages
+[ ! -L /www/hotspotlogin ] && ln -s /usr/share/hotspotlogin /www/hotspotlogin
+    
+
+# Cleanup
+rm -rf /etc/uci-defaults/80_setup_radmon
+exit 0

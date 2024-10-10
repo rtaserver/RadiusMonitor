@@ -1,0 +1,6 @@
+#!/bin/bash
+. /lib/functions.sh
+
+# Cleanup
+rm -rf /etc/uci-defaults/99_overwrite_build
+exit 0
