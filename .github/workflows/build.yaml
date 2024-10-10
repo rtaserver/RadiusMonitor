@@ -2,6 +2,9 @@ name: Build Packages
 
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - v*
 
 jobs:
   Get-Version:
@@ -53,4 +56,3 @@ jobs:
         with:
           prerelease: true
           files: bin/packages/x86_64/radiusmonitor/*.ipk
-          tag_name: "v${{ needs.Get-Version.outputs.version }}-beta"

@@ -2,7 +2,6 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-radius-monitor
 PKG_VERSION:=2.3
-PKG_RELEASE:=beta
 PKG_MAINTAINER:=Maizil <maizilpc7@gmail.com>
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
