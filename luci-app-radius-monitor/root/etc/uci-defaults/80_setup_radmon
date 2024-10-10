@@ -2,9 +2,6 @@
 
 # First Build Check And Update
 
-# Redirect output to log file
-exec > /root/setup-radmon.log 2>&1
-
 cleanup(){
     rm -rf /etc/uci-defaults/80_setup_radmon
 }

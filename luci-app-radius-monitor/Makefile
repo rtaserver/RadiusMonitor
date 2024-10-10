@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-radius-monitor
-PKG_VERSION:=2.4
+PKG_VERSION:=2.5
 PKG_MAINTAINER:=Maizil <maizilpc7@gmail.com>
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
@@ -44,6 +44,10 @@ endef
 
 # Post-install steps
 define Package/$(PKG_NAME)/postinst
+#!/bin/sh
+cat <<EOF > /root/setup-radmon.log
+Installed luci-app-radius-monitor: $(PKG_VERSION)
+EOF
 endef
 
 # Pre-removal steps
