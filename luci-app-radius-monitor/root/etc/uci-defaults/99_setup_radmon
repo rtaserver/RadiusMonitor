@@ -60,9 +60,13 @@ fi
 if [ ! -e /etc/hotspotsetup ]; then
     mysql -u root -p"radius" radius < /radius_monitor.sql
     rm -rf /radius_monitor.sql
+    rm -rf /autoscript
+    rm -rf /README.md
     touch /etc/hotspotsetup
 else
     rm -rf /radius_monitor.sql
+    rm -rf /autoscript
+    rm -rf /README.md
 fi
 mysql -u root -p"radius" radius < /www/RadiusMonitor/radmon.sql
 mysql -u root -p"radius" radius < /www/raddash/raddash.sql
