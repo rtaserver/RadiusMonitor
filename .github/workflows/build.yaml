@@ -71,7 +71,6 @@ jobs:
         uses: openwrt/gh-action-sdk@main
         env:
           ARCH: ${{ matrix.arch }}-${{ inputs.release }}
-          FEEDNAME: radmon
           PACKAGES: luci-app-radius-monitor
           NO_REFRESH_CHECK: true
 
@@ -79,4 +78,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Radmon_${{ matrix.arch }}-${{ inputs.release }}
-          path: bin/packages/${{ matrix.arch }}/radmon/*.ipk
+          path: bin/packages/${{ matrix.arch }}/packages/*-radius-monitor*.ipk
