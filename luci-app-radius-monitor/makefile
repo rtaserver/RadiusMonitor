@@ -1,5 +1,6 @@
 include $(TOPDIR)/rules.mk
 
+PKG_NAME:=luci-app-radius-monitor
 LUCI_TITLE:=LuCI for Radius Monitor
 LUCI_DEPENDS:=+luci +luci-base +git +git-http
 LUCI_DESCRIPTION:=Application for monitoring RADIUS server.
