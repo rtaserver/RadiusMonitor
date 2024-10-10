@@ -25,37 +25,12 @@ freeradius3-mod-mschap freeradius3-mod-pap freeradius3-mod-preprocess freeradius
 freeradius3-mod-realm freeradius3-mod-sql freeradius3-mod-sql-mysql freeradius3-mod-sqlcounter \
 freeradius3-mod-unix freeradius3-utils libfreetype wget-ssl curl unzip tar zoneinfo-asia coova-chilli"
 
-# Function untuk mengecek apakah paket sudah terpasang
-check_installed() {
-    for package in $1; do
-        if ! opkg list-installed | grep -qw "$package"; then
-            echo "Paket $package belum terpasang. Menambah ke daftar instalasi."
-            INSTALL_LIST="$INSTALL_LIST $package"
-        else
-            echo "Paket $package sudah terpasang."
-        fi
-    done
-}
-
-# Daftar paket yang belum terpasang
-INSTALL_LIST=""
-
-# Cek setiap kelompok paket
-echo "Memeriksa paket PHP..."
-check_installed "$PHP8"
-
-echo "Memeriksa paket MariaDB..."
-check_installed "$MARIADB"
-
-echo "Memeriksa paket FreeRADIUS..."
-check_installed "$FREERADIUS"
-
-# Jika ada paket yang belum terpasang, install
-if [ -n "$INSTALL_LIST" ]; then
-    echo "Menginstal paket-paket berikut: $INSTALL_LIST"
-    opkg install $INSTALL_LIST
+opkg install $PHP8 $MARIADB $FREERADIUS
+if [ $? -eq 0 ]; then
+    echo "Install Packages Sukses"
 else
-    echo "Semua paket sudah terpasang."
+    echo "Gagal Install Packages"
+	clean_me
 fi
 
 # Download Packages
