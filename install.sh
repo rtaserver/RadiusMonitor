@@ -25,6 +25,15 @@ curl -s -L -o "/tmp/${IPK}" "https://mirror.ghproxy.com/https://github.com/rtase
 # install ipks
 echo "install ipks"
 opkg install /tmp/${IPK}
+if [ $? -ne 0 ]; then
+    clear
+    echo "Installation failed"
+    echo "Check Your Internet Connection"
+    echo "Please try again"
+    rm -f /tmp/${IPK}
+    exit 1
+fi
+
 rm -f /tmp/${IPK}
 
-echo "success"
+echo "Installation success"
