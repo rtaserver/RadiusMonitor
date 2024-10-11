@@ -191,5 +191,37 @@ if [ -d "/tmp/hotspotlogin" ]; then
     ln -s /usr/share/hotspotlogin /www/hotspotlogin
 fi
 
+# ===========================================================================================================
+# SETUP NETWORK FIREWALL
+uci set network.chilli=interface
+uci set network.chilli.proto='none'
+uci set network.chilli.device='tun0'
+
+uci set network.hotspot=interface
+uci set network.hotspot.proto='static'
+uci set network.hotspot.ipaddr='10.10.30.1'
+uci set network.hotspot.netmask='255.255.255.0'
+
+uci commit network
+
+if ! uci show firewall | grep -q "firewall\.tun="; then
+	uci add firewall zone
+	uci set firewall.@zone[-1].name='tun'
+	uci set firewall.@zone[-1].input='ACCEPT'
+	uci set firewall.@zone[-1].output='ACCEPT'
+	uci set firewall.@zone[-1].forward='REJECT'
+	uci add_list firewall.@zone[-1].network='chilli'
+	uci add firewall forwarding
+	uci set firewall.@forwarding[-1].src='tun'
+	uci set firewall.@forwarding[-1].dest='wan'
+    uci commit firewall
+fi
+
+if ! uci show firewall | grep -q "firewall.@zone[0].network=hotspot"; then
+	uci add_list firewall.@zone[0].network='hotspot'
+    uci commit firewall
+fi
+# ===========================================================================================================
+
 rm -rf /etc/uci-defaults/99_setup_radmon
 exit 0
