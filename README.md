@@ -41,7 +41,7 @@ curl -s -L https://mirror.ghproxy.com/https://github.com/rtaserver/RadiusMonitor
 
 ## How To Use
 
-See [Wiki](https://github.com/morytyann/OpenWrt-mihomo/wiki)
+See [Wiki](https://github.com/rtaserver/RadiusMonitor/wiki)
 
 ## Dependencies
 
