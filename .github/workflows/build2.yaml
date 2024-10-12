@@ -30,6 +30,7 @@ jobs:
 
           
   job_build_radmon:
+    needs: Get-Version
     name: Build radmon [Luci ${{ matrix.luci_ver }}]
     runs-on: ubuntu-latest
     strategy:
