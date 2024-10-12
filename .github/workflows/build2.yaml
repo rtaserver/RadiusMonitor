@@ -12,6 +12,23 @@ env:
 
 
 jobs:
+  Get-Version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: New Version
+        id: version
+        run: |
+          echo "version=$(grep 'PKG_VERSION:=' ./luci-app-radius-monitor/Makefile |awk -F '=' '{print $2}')" >> $GITHUB_OUTPUT
+          echo "New Version: $(grep 'PKG_VERSION:=' ./luci-app-radius-monitor/Makefile |awk -F '=' '{print $2}')"
+
+          
   job_build_radmon:
     name: Build radmon [Luci ${{ matrix.luci_ver }}]
     runs-on: ubuntu-latest
@@ -19,10 +36,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - sdk_ver: 21.02
-            luci_ver: 19.07
-            sdk_url: https://downloads.openwrt.org/releases/21.02.5/targets/x86/64/openwrt-sdk-21.02.5-x86-64_gcc-8.4.0_musl.Linux-x86_64.tar.xz
-
           - sdk_ver: 23.05
             luci_ver: 23.05
             sdk_url: https://downloads.openwrt.org/releases/23.05.0/targets/x86/64/openwrt-sdk-23.05.0-x86-64_gcc-12.3.0_musl.Linux-x86_64.tar.xz
@@ -88,6 +101,7 @@ jobs:
           cd ..
           echo "status=success" >> $GITHUB_OUTPUT
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+          mv ${{ env.FIRMWARE }}/radmon/luci-23.05_luci-app-radius-monitor_${{ needs.Get-Version.outputs.version }}_all.ipk ${{ env.FIRMWARE }}/radmon/luci-app-radius-monitor_${{ needs.Get-Version.outputs.version }}_all.ipk 
 
       - name: Upload radmon ipks to release
         uses: softprops/action-gh-release@master
@@ -95,5 +109,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: test
+          tag_name: v${{ needs.Get-Version.outputs.version }}
           files: ${{ env.FIRMWARE }}/radmon/*.ipk
