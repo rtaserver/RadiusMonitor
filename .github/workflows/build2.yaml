@@ -45,7 +45,6 @@ jobs:
           key: openwrt-luci-${{ matrix.luci_ver }}-x86_64
 
       - name: Initialization environment
-        if: steps.cache-sdk.outputs.cache-hit != 'true'
         run: |
           wget ${{ matrix.sdk_url }}
           file_name=$(echo ${{ matrix.sdk_url }} | awk -F/ '{print $NF}')
@@ -62,7 +61,6 @@ jobs:
           make package/luci-app-radius-monitor/download -j8
 
       - name: Update radmon feeds
-        if: steps.cache-sdk.outputs.cache-hit == 'true'
         run: |
           cd sdk
           sed -i '6s/main/${{ github.ref_name }}/' feeds.conf
