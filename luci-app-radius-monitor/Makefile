@@ -4,8 +4,8 @@ PKG_NAME:=luci-app-radius-monitor
 PKG_VERSION:=1.2
 PKG_MAINTAINER:=Maizil <maizilpc7@gmail.com>
 LUCI_TITLE:=LuCI support for Radius Chilli
-LUCI_PKGARCH:=all
-LUCI_DEPENDS:=+git +git-http +unzip +dos2unix +bash +curl\
+PKGARCH:=all
+DEPENDS:=+git +git-http +unzip +dos2unix +bash +curl\
 +php8 +php8-fastcgi +php8-fpm +coreutils-stat +zoneinfo-asia +php8-cgi \
 +php8-cli +php8-mod-bcmath +php8-mod-calendar +php8-mod-ctype +php8-mod-curl +php8-mod-dom +php8-mod-exif \
 +php8-mod-fileinfo +php8-mod-filter +php8-mod-gd +php8-mod-iconv +php8-mod-intl +php8-mod-mbstring +php8-mod-mysqli \
