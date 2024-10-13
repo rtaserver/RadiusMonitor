@@ -1,47 +1,26 @@
+# This is free software, licensed under the Apache License, Version 2.0
+#
+# Copyright (C) 2024 Maizil <maizilpc7@gmail.com>
+
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-radius-monitor
-PKG_VERSION:=1.2
+LUCI_TITLE:=LuCI for Radius Monitor.
+LUCI_DEPENDS:=+luci +git +git-http +php8-cli +php8-mod-mysqli +php8-mod-pdo-mysql +php8-mod-gd +php8-mod-xml +php8-mod-filter +php8-mod-curl +iptables-nft +iptables-mod-hashlimit \
++freeradius3-default +freeradius3-mod-sql-mysql +freeradius3-mod-sqlcounter +freeradius3-utils \
++mariadb-client-extra +mariadb-server-extra +coova-chilli
+LUCI_DESCRIPTION:=Application for monitoring RADIUS server.
+LUCI_MAINTAINER:=Maizil <maizilpc7@gmail.com>
+
 PKG_MAINTAINER:=Maizil <maizilpc7@gmail.com>
-LUCI_TITLE:=LuCI support for Radius Chilli
-LUCI_DEPENDS:=+git +git-http +unzip +dos2unix +bash +curl\
-+php8 +php8-fastcgi +php8-fpm +coreutils-stat +zoneinfo-asia +php8-cgi \
-+php8-cli +php8-mod-bcmath +php8-mod-calendar +php8-mod-ctype +php8-mod-curl +php8-mod-dom +php8-mod-exif \
-+php8-mod-fileinfo +php8-mod-filter +php8-mod-gd +php8-mod-iconv +php8-mod-intl +php8-mod-mbstring +php8-mod-mysqli \
-+php8-mod-mysqlnd +php8-mod-opcache +php8-mod-pdo +php8-mod-pdo-mysql +php8-mod-phar +php8-mod-session \
-+php8-mod-xml +php8-mod-xmlreader +php8-mod-xmlwriter +php8-mod-zip +libopenssl-legacy \
-+mariadb-server +mariadb-server-extra +mariadb-client +mariadb-client-extra +libmariadb +nano \
-+freeradius3 +coova-chilli
-
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
-
-include $(INCLUDE_DIR)/package.mk
-
-define Package/$(PKG_NAME)/description
-    Dukungan LuCI untuk Radius Chilli
-endef
-
-define Build/Prepare
-    $(CP) $(CURDIR)/root $(PKG_BUILD_DIR)
-    $(CP) $(CURDIR)/luasrc $(PKG_BUILD_DIR)
-endef
-
-define Build/Configure
-endef
-
-define Build/Compile
-endef
-
-define Package/$(PKG_NAME)/conffiles
-endef
+PKG_VERSION:=2.3
+PKG_RELEASE:=beta
+PKG_LICENSE:=Apache-2.0
+PKG_ARCH:=all
 
 define Package/$(PKG_NAME)/preinst
 #!/bin/sh
     cp -rf "/usr/share/hotspotlogin" "/tmp/hotspotlogin" >/dev/null 2>&1
     exit 0
-endef
-
-define Package/$(PKG_NAME)/postinst
 endef
 
 define Package/$(PKG_NAME)/prerm
@@ -59,11 +38,6 @@ define Package/$(PKG_NAME)/postrm
     exit 0
 endef
 
-define Package/$(PKG_NAME)/install
-    $(CP) $(PKG_BUILD_DIR)/root/* $(1)/
-    $(CP) $(PKG_BUILD_DIR)/luasrc/* $(1)/usr/lib/lua/luci/
-endef
-
 include $(TOPDIR)/feeds/luci/luci.mk
 
-$(eval $(call BuildPackage,$(PKG_NAME)))
+# call BuildPackage - OpenWrt buildroot signature
